@@ -1,0 +1,3024 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Abrechnung</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Abrechnung">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Moderne Schriftart -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-highlight: #e7f1ff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --header-bg: #2d3748;
+            --header-text: #ffffff;
+            --accent: #3182ce;
+            --negative: #e53e3e;
+            --neutral: #718096;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-highlight: #2c5282;
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #a0aec0;
+            --border-color: #4a5568;
+            --shadow: 0 2px 8px rgba(0,0,0,0.3);
+            --header-bg: #1a202c;
+            --header-text: #f7fafc;
+            --accent: #4299e1;
+            --negative: #fc8181;
+            --neutral: #a0aec0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        input, textarea {
+            -webkit-user-select: text;
+            -khtml-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        /* Splash Screen */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        #splashScreen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+      .logo-container {
+    margin-bottom: 30px;
+    animation: fadeInScale 0.8s ease-out;
+    position: relative;
+    width: 260px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top-color: #d4af37;
+    border-right-color: #d4af37;
+    border-radius: 50%;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.logo-image {
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 50%;
+    filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .splash-text {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 600;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.3s forwards;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .splash-subtext {
+            color: #a0aec0;
+            font-size: 16px;
+            margin-top: 10px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.5s forwards;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+        
+        .header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.3s ease;
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .theme-toggle {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--header-text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .content-padding {
+            padding: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-highlight);
+            border-radius: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: #f59e0b;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 118, 110, 0.4);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            color: #fbbf24;
+        }
+        
+        [data-theme="dark"] .btn-primary {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: #fbbf24;
+        }
+        
+        [data-theme="dark"] .btn-primary:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            color: #fcd34d;
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .results-container {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .results-container.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-section {
+            background: var(--bg-secondary);
+            margin: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .result-section h3 {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .positive {
+            color: #48bb78;
+        }
+        
+        .negative {
+            color: var(--negative);
+        }
+        
+        .bg-positive {
+            background: linear-gradient(135deg, #90ee90 0%, #7dd87d 100%);
+        }
+        
+        .bg-positive h3,
+        .bg-positive .result-label,
+        .bg-positive .result-value {
+            color: #1a202c;
+        }
+        
+        .bg-negative {
+            background: linear-gradient(135deg, #87ceeb 0%, #6ab9e0 100%);
+        }
+        
+        .bg-negative h3,
+        .bg-negative .result-label,
+        .bg-negative .result-value {
+            color: #1a202c;
+        }
+
+        [data-theme="dark"] .bg-positive h3,
+        [data-theme="dark"] .bg-positive .result-label,
+        [data-theme="dark"] .bg-positive .result-value {
+            color: #0d4d0d;
+        }
+
+        [data-theme="dark"] .bg-negative h3,
+        [data-theme="dark"] .bg-negative .result-label,
+        [data-theme="dark"] .bg-negative .result-value {
+            color: #0a3a52;
+        }
+        
+        .bg-neutral {
+            background: var(--bg-secondary);
+        }
+        
+        .btn-export {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: #f59e0b;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 118, 110, 0.4);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            color: #fbbf24;
+        }
+
+        [data-theme="dark"] .btn-export {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: #fbbf24;
+        }
+
+        [data-theme="dark"] .btn-export:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            color: #fcd34d;
+        }
+        
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 118, 110, 0.4);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+        }
+
+        [data-theme="dark"] .btn-export {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+        }
+
+        [data-theme="dark"] .btn-export:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+        }
+
+        /* iOS Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-highlight);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 51px;
+            height: 31px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #c6c6c6;
+            outline: none;
+            border-radius: 31px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        [data-theme="dark"] .toggle-switch {
+            background: #39393d;
+        }
+
+        .toggle-switch:checked {
+            background: #34c759;
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 27px;
+            height: 27px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch:checked::before {
+            transform: translateX(20px);
+        }
+		
+		/* iOS Toggle für VgnSt-freie Geräte */
+        .ios-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .ios-toggle-input {
+            display: none;
+        }
+
+        .ios-toggle-slider {
+            position: relative;
+            width: 51px;
+            height: 31px;
+            background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+            border-radius: 34px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        [data-theme="dark"] .ios-toggle-slider {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        }
+
+        .ios-toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 27px;
+            height: 27px;
+            left: 2px;
+            top: 2px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .ios-toggle-input:checked + .ios-toggle-slider {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+        }
+
+        .ios-toggle-input:checked + .ios-toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        .ios-toggle-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+		
+		/* VgnSt Toggle Switch (Sliding Pill mit Icons) */
+        .vgnst-toggle-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .vgnst-toggle-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .vgnst-toggle-switch {
+            position: relative;
+            display: inline-flex;
+            background: var(--border-color);
+            border-radius: 25px;
+            padding: 4px;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .vgnst-toggle-option {
+            flex: 1;
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            z-index: 2;
+            transition: color 0.3s ease;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #4a5568;
+        }
+
+        [data-theme="dark"] .vgnst-toggle-option {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .vgnst-toggle-option.active {
+            color: #f59e0b;
+            text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+        }
+
+        [data-theme="dark"] .vgnst-toggle-option.active {
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+        }
+
+        .vgnst-toggle-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: linear-gradient(135deg, var(--accent) 0%, #2c5282 100%);
+            border-radius: 20px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .vgnst-toggle-slider.right {
+            transform: translateX(calc(100% + 4px));
+        }
+
+        .vgnst-toggle-icon {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        [data-theme="dark"] .vgnst-toggle-switch {
+            background: var(--bg-highlight);
+        }
+		
+		/* Mode Toggle Switch (3 Segments) */
+        .mode-toggle-container {
+            background: var(--bg-secondary);
+            margin: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .mode-toggle-label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .mode-toggle-switch {
+            position: relative;
+            display: flex;
+            background: var(--border-color);
+            border-radius: 25px;
+            padding: 4px;
+            width: 100%;
+        }
+
+        .mode-toggle-option {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 2;
+            transition: color 0.3s ease;
+            border-radius: 20px;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+
+        [data-theme="dark"] .mode-toggle-option {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .mode-toggle-option.active {
+            color: #f59e0b;
+            text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+        }
+
+        [data-theme="dark"] .mode-toggle-option.active {
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+        }
+
+        .mode-toggle-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(33.333% - 4px);
+            height: calc(100% - 8px);
+            background: linear-gradient(135deg, var(--accent) 0%, #2c5282 100%);
+            border-radius: 20px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .mode-toggle-slider.pos-1 {
+            transform: translateX(0);
+        }
+
+        .mode-toggle-slider.pos-2 {
+            transform: translateX(calc(100% + 8px));
+        }
+
+        .mode-toggle-slider.pos-3 {
+            transform: translateX(calc(200% + 16px));
+        }
+
+        [data-theme="dark"] .mode-toggle-switch {
+            background: var(--bg-highlight);
+        }
+
+        @media (max-width: 768px) {
+            .mode-toggle-option {
+                font-size: 12px;
+                padding: 10px 8px;
+            }
+        }
+
+        /* Multi-Device Container */
+        .multi-device-container {
+            display: none;
+        }
+
+        .multi-device-container.active {
+            display: block;
+        }
+
+        .device-group {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 2px solid var(--border-color);
+        }
+
+        .device-header {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .device-count-selector {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .device-count-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .device-count-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 16px;
+            cursor: pointer;
+        }
+		
+		/* Table View Button */
+        .btn-table-view {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: #f59e0b;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+            display: none;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-table-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 118, 110, 0.4);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            color: #fbbf24;
+        }
+
+        [data-theme="dark"] .btn-table-view {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: #fbbf24;
+        }
+
+        [data-theme="dark"] .btn-table-view:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            color: #fcd34d;
+        }
+
+        /* Table View Overlay */
+        .table-view-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .table-view-overlay.active {
+            display: flex;
+        }
+
+        .table-view-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            max-width: 95vw;
+            max-height: 90vh;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--border-color);
+            background: var(--bg-highlight);
+        }
+
+        .table-view-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .table-view-close {
+            background: var(--negative);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .table-view-close:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+        }
+
+        .table-view-body {
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .overview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .overview-table th {
+            background: var(--accent);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .overview-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .overview-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .overview-table tbody tr:hover {
+            background: var(--bg-highlight);
+        }
+
+        .overview-table tbody tr.summary-row {
+            border-top: 3px solid var(--border-color);
+            font-weight: 900;
+            background: var(--bg-highlight);
+        }
+
+        .overview-table tbody tr.summary-row .positive-val {
+            color: #22c55e;
+            font-weight: 900;
+            font-size: 15px;
+        }
+
+        [data-theme="dark"] .overview-table tbody tr.summary-row .positive-val {
+            color: #4ade80;
+        }
+
+        .overview-table tbody tr.summary-row:hover {
+            background: var(--bg-highlight);
+        }
+
+        .overview-table tbody tr.summary-row td:first-child {
+            background: var(--bg-highlight);
+        }
+
+        .positive-val {
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .negative-val {
+            color: var(--negative);
+            font-weight: 600;
+        }
+
+        /* Device Cards for GSG Gemischt */
+        .device-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .device-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .device-card-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-highlight);
+            transition: background 0.3s ease;
+        }
+
+        .device-card-header:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .device-card-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .device-card-toggle {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .device-card.expanded .device-card-toggle {
+            transform: rotate(180deg);
+        }
+
+        .device-card-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .device-card.expanded .device-card-body {
+            max-height: 500px;
+        }
+
+        .device-card-content {
+            padding: 16px;
+        }
+
+        .device-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .device-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .device-detail-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .device-detail-value {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .device-detail-value.positive {
+            color: #48bb78;
+        }
+
+        .device-detail-value.negative {
+            color: var(--negative);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            .mode-switcher,
+            .content-padding,
+            .result-section {
+                margin: 16px;
+                padding: 16px;
+            }
+
+            .overview-table {
+                font-size: 12px;
+            }
+
+            .overview-table th,
+            .overview-table td {
+                padding: 8px;
+            }
+
+            .table-view-content {
+                max-width: 98vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+        <div class="logo-container">
+            <img src="icon-512.png" alt="GSG Abrechnung Logo" class="logo-image">
+        </div>
+        <div class="splash-text">GSG Abrechnung</div>
+        <div class="splash-subtext">erstellt von Eduard</div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>Abrechnung</h1>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Mode Switcher -->
+        <div class="mode-toggle-container">
+            <label class="mode-toggle-label">Abrechnungsmodus</label>
+            <div class="mode-toggle-switch" id="modeToggleSwitch">
+                <div class="mode-toggle-slider pos-1" id="modeToggleSlider"></div>
+                <div class="mode-toggle-option active" data-mode="gsg">
+                    <span>Geldspielgeräte</span>
+                </div>
+                <div class="mode-toggle-option" data-mode="spieltische">
+                    <span>Spieltische</span>
+                </div>
+                <div class="mode-toggle-option" data-mode="gsg_gemischt">
+                    <span>GSG Gemischt</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- GSG Tab -->
+        <div id="tab_gsg" class="tab-content active">
+            <div class="content-padding">
+                <!-- Multi-Device Toggle -->
+                <div class="toggle-container">
+                    <span class="toggle-label">2 GSG</span>
+                    <input type="checkbox" class="toggle-switch" id="multiGsgToggle">
+                </div>
+
+                <!-- Single Device (Default) -->
+                <div id="singleGsgContainer">
+                    <div class="input-group">
+                        <label for="kasse_gsg">Kasseninhalt (€)</label>
+                        <input type="number" id="kasse_gsg" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="fehlbetrag_gsg">Fehlbetrag (€)</label>
+                        <input type="number" id="fehlbetrag_gsg" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+
+                <!-- Multi Device Container -->
+                <div class="multi-device-container" id="multiGsgContainer">
+                    <div class="device-group">
+                        <div class="device-header">Geldspielgerät 1</div>
+                        <div class="input-group">
+                            <label for="kasse_gsg1">Kasseninhalt (€)</label>
+                            <input type="number" id="kasse_gsg1" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label for="fehlbetrag_gsg1">Fehlbetrag (€)</label>
+                            <input type="number" id="fehlbetrag_gsg1" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="device-group">
+                        <div class="device-header">Geldspielgerät 2</div>
+                        <div class="input-group">
+                            <label for="kasse_gsg2">Kasseninhalt (€)</label>
+                            <input type="number" id="kasse_gsg2" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label for="fehlbetrag_gsg2">Fehlbetrag (€)</label>
+                            <input type="number" id="fehlbetrag_gsg2" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="vgnst_gsg">Vergnügungssteuer: <span id="vgnst_gsg_value">18</span>%</label>
+                    <input type="range" id="vgnst_gsg" value="18" min="5" max="35" step="1">
+                </div>
+
+                <div class="input-group">
+                    <label for="prozent_gsg">Wirt-Anteil (%)</label>
+                    <select id="prozent_gsg">
+                        <option value="30">30%</option>
+                        <option value="35">35%</option>
+                        <option value="40">40%</option>
+                        <option value="45">45%</option>
+                        <option value="50" selected>50%</option>
+                        <option value="55">55%</option>
+                        <option value="60">60%</option>
+                        <option value="65">65%</option>
+                        <option value="70">70%</option>
+                        <option value="75">75%</option>
+                        <option value="80">80%</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="gebuehren_gsg_check">
+                    <label for="gebuehren_gsg_check">Gebühren berücksichtigen</label>
+                </div>
+
+                <div class="input-group" id="gebuehren_gsg_group" style="display: none;">
+                    <label for="gebuehren_gsg">Gebühren (€)</label>
+                    <input type="number" id="gebuehren_gsg" placeholder="0.00" step="0.01">
+                </div>
+
+                <button class="btn-primary" id="berechnen_gsg">Berechnen</button>
+            </div>
+
+            <!-- Results -->
+            <div class="results-container" id="resultsContainer_gsg">
+                <div class="result-section bg-neutral" id="section1_gsg">
+                    <button class="btn-table-view" id="btnTableView_gsg" style="margin-bottom: 16px;">📊 Tabellenansicht</button>
+                    <h3>Einzelgeräte</h3>
+                    <div id="deviceRows_gsg"></div>
+                </div>
+
+                <div class="result-section bg-positive">
+                    <h3>Wirt (Brutto)</h3>
+                    <div class="result-row">
+                        <span class="result-label">Nettoanteil Wirt</span>
+                        <span class="result-value" id="netto_wirt_gsg">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">+ 19% MwSt</span>
+                        <span class="result-value" id="mwst_wirt_gsg">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">= Auszahlung Wirt</span>
+                        <span class="result-value" id="brutto_wirt_gsg">0,00 €</span>
+                    </div>
+                </div>
+
+                <div class="result-section bg-negative">
+                    <h3>Aufsteller (Brutto)</h3>
+                    <div class="result-row">
+                        <span class="result-label">Nettoanteil Aufsteller</span>
+                        <span class="result-value" id="netto_aufsteller_gsg">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">+ 19% MwSt</span>
+                        <span class="result-value" id="mwst_aufsteller_gsg">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">= Auszahlung Aufsteller</span>
+                        <span class="result-value" id="brutto_aufsteller_gsg">0,00 €</span>
+                    </div>
+                </div>
+
+                <button class="btn-export" id="exportPDF_gsg">📄 PDF exportieren</button>
+            </div>
+        </div>
+
+        <!-- Spieltische Tab -->
+        <div id="tab_spieltische" class="tab-content">
+            <div class="content-padding">
+                <!-- Multi-Device Toggle -->
+                <div class="toggle-container">
+                    <span class="toggle-label">Mehrere Tische</span>
+                    <input type="checkbox" class="toggle-switch" id="multiStToggle">
+                </div>
+
+                <!-- Device Count Selector -->
+                <div class="multi-device-container" id="deviceCountContainer_st">
+                    <div class="device-count-selector">
+                        <label for="deviceCount_st">Anzahl Tische</label>
+                        <select id="deviceCount_st">
+                            <option value="1">1 Tisch</option>
+                            <option value="2">2 Tische</option>
+                            <option value="3">3 Tische</option>
+                            <option value="4">4 Tische</option>
+                            <option value="5">5 Tische</option>
+                            <option value="6">6 Tische</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dynamic Device Inputs -->
+                <div id="spieltischeDevices"></div>
+
+                <div class="vgnst-toggle-container">
+                    <label class="vgnst-toggle-label">Vergnügungssteuer</label>
+                    <div class="vgnst-toggle-switch" id="vgnstToggleSwitch">
+                        <div class="vgnst-toggle-slider" id="vgnstToggleSlider"></div>
+                        <div class="vgnst-toggle-option active" data-value="prozent">
+                            <span class="vgnst-toggle-icon">%</span>
+                            <span>Prozentual</span>
+                        </div>
+                        <div class="vgnst-toggle-option" data-value="pauschal">
+                            <span class="vgnst-toggle-icon">€</span>
+                            <span>Pauschal</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="vgnst_mode_st" value="prozent">
+                </div>
+
+                <div class="input-group" id="vgnst_prozent_group_st">
+                    <label for="vgnst_prozent_st">VgnSt Prozentsatz: <span id="vgnst_prozent_st_value">18</span>%</label>
+                    <input type="range" id="vgnst_prozent_st" value="18" min="5" max="35" step="1">
+                </div>
+
+                <div class="input-group" id="vgnst_pauschal_group_st" style="display: none;">
+                    <label for="vgnst_pauschal_st">VgnSt Pauschalbetrag (€)</label>
+                    <input type="number" id="vgnst_pauschal_st" placeholder="0.00" step="0.01">
+                </div>
+
+                <div class="input-group">
+                    <label for="prozent_st">Wirt-Anteil (%)</label>
+                    <input type="number" id="prozent_st" value="50" min="30" max="80" step="1">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="gebuehren_st_check">
+                    <label for="gebuehren_st_check">Gebühren berücksichtigen</label>
+                </div>
+
+                <div class="input-group" id="gebuehren_st_group" style="display: none;">
+                    <label for="gebuehren_st">Gebühren (€)</label>
+                    <input type="number" id="gebuehren_st" placeholder="0.00" step="0.01">
+                </div>
+
+                <button class="btn-primary" id="berechnen_st">Berechnen</button>
+            </div>
+
+            <!-- Results -->
+            <div class="results-container" id="resultsContainer_st">
+                <div class="result-section bg-neutral" id="section1_st">
+                    <button class="btn-table-view" id="btnTableView_st" style="margin-bottom: 16px;">📊 Tabellenansicht</button>
+                    <h3>Einzelgeräte</h3>
+                    <div id="deviceRows_st"></div>
+                </div>
+
+                <div class="result-section bg-positive">
+                    <h3>Wirt (Brutto)</h3>
+                    <div class="result-row">
+                        <span class="result-label">Nettoanteil Wirt</span>
+                        <span class="result-value" id="netto_wirt_st">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">+ 19% MwSt</span>
+                        <span class="result-value" id="mwst_wirt_st">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">= Auszahlung Wirt</span>
+                        <span class="result-value" id="brutto_wirt_st">0,00 €</span>
+                    </div>
+                </div>
+
+                <div class="result-section bg-negative">
+                    <h3>Aufsteller (Brutto)</h3>
+                    <div class="result-row">
+                        <span class="result-label">Nettoanteil Aufsteller</span>
+                        <span class="result-value" id="netto_aufsteller_st">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">+ 19% MwSt</span>
+                        <span class="result-value" id="mwst_aufsteller_st">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">= Auszahlung Aufsteller</span>
+                        <span class="result-value" id="brutto_aufsteller_st">0,00 €</span>
+                    </div>
+                </div>
+
+                <button class="btn-export" id="exportPDF_st">📄 PDF exportieren</button>
+            </div>
+        </div>
+		
+		<!-- GSG Gemischt Tab -->
+        <div id="tab_gsg_gemischt" class="tab-content">
+            <div class="content-padding">
+                <!-- GSG Geräte -->
+                <h3 style="margin-bottom: 16px; color: var(--text-secondary);">Geldspielgeräte (VgnSt-pflichtig)</h3>
+                
+                <div class="device-group">
+                    <div class="device-header">GSG 1</div>
+                    <div class="input-group">
+                        <label for="kasse_gsg_gem1">Kasseninhalt (€)</label>
+                        <input type="number" id="kasse_gsg_gem1" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="fehlbetrag_gsg_gem1">Fehlbetrag (€)</label>
+                        <input type="number" id="fehlbetrag_gsg_gem1" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+
+                <div class="device-group">
+                    <div class="device-header">GSG 2</div>
+                    <div class="input-group">
+                        <label for="kasse_gsg_gem2">Kasseninhalt (€)</label>
+                        <input type="number" id="kasse_gsg_gem2" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="fehlbetrag_gsg_gem2">Fehlbetrag (€)</label>
+                        <input type="number" id="fehlbetrag_gsg_gem2" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+
+                <!-- Unterhaltungsgeräte -->
+                <h3 style="margin: 24px 0 16px; color: var(--text-secondary);">Unterhaltungsgeräte (VgnSt.-Frei)</h3>
+                
+                <!-- UG 1 -->
+                <div style="margin-bottom: 20px;">
+                    <label class="ios-toggle-container">
+                        <input type="checkbox" id="showUG1" class="ios-toggle-input">
+                        <div class="ios-toggle-slider"></div>
+                        <span class="ios-toggle-label">UG 1</span>
+                    </label>
+                </div>
+                <div id="ugContainer1" style="display: none;">
+                    <div class="device-group">
+                        <div class="device-header">Unterhaltungsgerät 1</div>
+                        <div class="input-group">
+                            <label for="kasse_frei_gem1">Kasseninhalt (€)</label>
+                            <input type="number" id="kasse_frei_gem1" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UG 2 -->
+                <div style="margin-bottom: 20px;">
+                    <label class="ios-toggle-container">
+                        <input type="checkbox" id="showUG2" class="ios-toggle-input">
+                        <div class="ios-toggle-slider"></div>
+                        <span class="ios-toggle-label">UG 2</span>
+                    </label>
+                </div>
+                <div id="ugContainer2" style="display: none;">
+                    <div class="device-group">
+                        <div class="device-header">Unterhaltungsgerät 2</div>
+                        <div class="input-group">
+                            <label for="kasse_frei_gem2">Kasseninhalt (€)</label>
+                            <input type="number" id="kasse_frei_gem2" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UG 3 -->
+                <div style="margin-bottom: 20px;">
+                    <label class="ios-toggle-container">
+                        <input type="checkbox" id="showUG3" class="ios-toggle-input">
+                        <div class="ios-toggle-slider"></div>
+                        <span class="ios-toggle-label">UG 3</span>
+                    </label>
+                </div>
+                <div id="ugContainer3" style="display: none;">
+                    <div class="device-group">
+                        <div class="device-header">Unterhaltungsgerät 3</div>
+                        <div class="input-group">
+                            <label for="kasse_frei_gem3">Kasseninhalt (€)</label>
+                            <input type="number" id="kasse_frei_gem3" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UG 4 -->
+                <div style="margin-bottom: 20px;">
+                    <label class="ios-toggle-container">
+                        <input type="checkbox" id="showUG4" class="ios-toggle-input">
+                        <div class="ios-toggle-slider"></div>
+                        <span class="ios-toggle-label">UG 4</span>
+                    </label>
+                </div>
+                <div id="ugContainer4" style="display: none;">
+                    <div class="device-group">
+                        <div class="device-header">Unterhaltungsgerät 4</div>
+                        <div class="input-group">
+                            <label for="kasse_frei_gem4">Kasseninhalt (€)</label>
+                            <input type="number" id="kasse_frei_gem4" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gemeinsame Parameter -->
+                <h3 style="margin: 24px 0 16px; color: var(--text-secondary);">Gemeinsame Parameter</h3>
+
+                <div class="input-group">
+                    <label for="vgnst_gem">Vergnügungssteuer (nur GSG): <span id="vgnst_gem_value">18</span>%</label>
+                    <input type="range" id="vgnst_gem" value="18" min="5" max="35" step="1">
+                </div>
+
+                <div class="input-group">
+                    <label for="prozent_gem">Wirt-Anteil (%)</label>
+                    <select id="prozent_gem">
+                        <option value="30">30%</option>
+                        <option value="35">35%</option>
+                        <option value="40">40%</option>
+                        <option value="45">45%</option>
+                        <option value="50" selected>50%</option>
+                        <option value="55">55%</option>
+                        <option value="60">60%</option>
+                        <option value="65">65%</option>
+                        <option value="70">70%</option>
+                        <option value="75">75%</option>
+                        <option value="80">80%</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="gebuehren_gem_check">
+                    <label for="gebuehren_gem_check">Gebühren berücksichtigen</label>
+                </div>
+
+                <div class="input-group" id="gebuehren_gem_group" style="display: none;">
+                    <label for="gebuehren_gem">Gebühren (€)</label>
+                    <input type="number" id="gebuehren_gem" placeholder="0.00" step="0.01">
+                </div>
+
+                <button class="btn-primary" id="berechnen_gem">Berechnen</button>
+            </div>
+
+            <!-- Results -->
+            <div class="results-container" id="resultsContainer_gem">
+                <div class="result-section bg-neutral" id="section1_gem">
+                    <button class="btn-table-view" id="btnTableView_gem" style="margin-bottom: 16px;">📊 Tabellenansicht</button>
+                    <h3>Einzelgeräte</h3>
+                    <div id="deviceCards_gem"></div>
+                </div>
+
+                <div class="result-section bg-positive">
+                    <h3>Wirt (Brutto)</h3>
+                    <div class="result-row">
+                        <span class="result-label">Nettoanteil Wirt</span>
+                        <span class="result-value" id="netto_wirt_gem">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">+ 19% MwSt</span>
+                        <span class="result-value" id="mwst_wirt_gem">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">= Auszahlung Wirt</span>
+                        <span class="result-value" id="brutto_wirt_gem">0,00 €</span>
+                    </div>
+                </div>
+
+                <div class="result-section bg-negative">
+                    <h3>Aufsteller (Brutto)</h3>
+                    <div class="result-row">
+                        <span class="result-label">Nettoanteil Aufsteller</span>
+                        <span class="result-value" id="netto_aufsteller_gem">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">+ 19% MwSt</span>
+                        <span class="result-value" id="mwst_aufsteller_gem">0,00 €</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">= Auszahlung Aufsteller</span>
+                        <span class="result-value" id="brutto_aufsteller_gem">0,00 €</span>
+                    </div>
+                </div>
+
+                <button class="btn-export" id="exportPDF_gem">📄 PDF exportieren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table View Overlay GSG -->
+    <div class="table-view-overlay" id="tableViewOverlay_gsg">
+        <div class="table-view-content">
+            <div class="table-view-header">
+                <div class="table-view-title">Übersicht Einzelgeräte</div>
+                <button class="table-view-close" id="closeTableView_gsg">✕</button>
+            </div>
+            <div class="table-view-body">
+                <table class="overview-table" id="overviewTable_gsg">
+                    <thead>
+                        <tr>
+                            <th>Gerät</th>
+                            <th>Brutto</th>
+                            <th>MwSt</th>
+                            <th>Netto</th>
+                            <th>VgnSt</th>
+                            <th class="gebuehren-col">Gebühren</th>
+                            <th>Verbleib</th>
+                            <th>%</th>
+                            <th>Wirt-Anteil</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overviewTableBody_gsg">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table View Overlay Spieltische -->
+    <div class="table-view-overlay" id="tableViewOverlay_st">
+        <div class="table-view-content">
+            <div class="table-view-header">
+                <div class="table-view-title">Übersicht Einzelgeräte</div>
+                <button class="table-view-close" id="closeTableView_st">✕</button>
+            </div>
+            <div class="table-view-body">
+                <table class="overview-table" id="overviewTable_st">
+                    <thead>
+                        <tr>
+                            <th>Tisch</th>
+                            <th>Brutto</th>
+                            <th>MwSt</th>
+                            <th>Netto</th>
+                            <th>VgnSt</th>
+                            <th class="gebuehren-col">Gebühren</th>
+                            <th>Verbleib</th>
+                            <th>%</th>
+                            <th>Wirt-Anteil</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overviewTableBody_st">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table View Overlay GSG Gemischt -->
+    <div class="table-view-overlay" id="tableViewOverlay_gem">
+        <div class="table-view-content">
+            <div class="table-view-header">
+                <div class="table-view-title">Übersicht Einzelgeräte</div>
+                <button class="table-view-close" id="closeTableView_gem">✕</button>
+            </div>
+            <div class="table-view-body">
+                <table class="overview-table" id="overviewTable_gem">
+                    <thead>
+                        <tr>
+                            <th>Gerät</th>
+                            <th>Brutto</th>
+                            <th>MwSt</th>
+                            <th>Netto</th>
+                            <th>VgnSt</th>
+                            <th class="gebuehren-col">Gebühren</th>
+                            <th>Verbleib</th>
+                            <th>%</th>
+                            <th>Wirt-Anteil</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overviewTableBody_gem">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // ========== SPLASH SCREEN ==========
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splashScreen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('splashScreen').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // ========== SERVICE WORKER REGISTRATION ==========
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('[App] Service Worker registriert:', reg.scope))
+                    .catch(err => console.error('[App] Service Worker Fehler:', err));
+            });
+        }
+
+        // ========== THEME TOGGLE ==========
+        const themeToggle = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = '☀️';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // ========== MODE SWITCHER (Sliding Pill Toggle) ==========
+        const modeToggleSwitch = document.getElementById('modeToggleSwitch');
+        const modeToggleSlider = document.getElementById('modeToggleSlider');
+        const modeToggleOptions = document.querySelectorAll('.mode-toggle-option');
+        const tabs = {
+            gsg: document.getElementById('tab_gsg'),
+            spieltische: document.getElementById('tab_spieltische'),
+            gsg_gemischt: document.getElementById('tab_gsg_gemischt')
+        };
+
+        modeToggleOptions.forEach((option, index) => {
+            option.addEventListener('click', function() {
+                const mode = this.getAttribute('data-mode');
+                
+                // Update active state
+                modeToggleOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Move slider to position
+                modeToggleSlider.className = 'mode-toggle-slider';
+                if (index === 0) {
+                    modeToggleSlider.classList.add('pos-1');
+                } else if (index === 1) {
+                    modeToggleSlider.classList.add('pos-2');
+                } else if (index === 2) {
+                    modeToggleSlider.classList.add('pos-3');
+                }
+                
+                // Switch tabs
+                Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+                tabs[mode].classList.add('active');
+            });
+        });
+
+        // ========== GSG MULTI-DEVICE TOGGLE ==========
+        const multiGsgToggle = document.getElementById('multiGsgToggle');
+        const singleGsgContainer = document.getElementById('singleGsgContainer');
+        const multiGsgContainer = document.getElementById('multiGsgContainer');
+
+        multiGsgToggle.addEventListener('change', function() {
+            if (this.checked) {
+                singleGsgContainer.style.display = 'none';
+                multiGsgContainer.classList.add('active');
+            } else {
+                singleGsgContainer.style.display = 'block';
+                multiGsgContainer.classList.remove('active');
+            }
+        });
+
+        // ========== SPIELTISCHE MULTI-DEVICE ==========
+        const multiStToggle = document.getElementById('multiStToggle');
+        const deviceCountContainer = document.getElementById('deviceCountContainer_st');
+        const deviceCountSelect = document.getElementById('deviceCount_st');
+        const spieltischeDevices = document.getElementById('spieltischeDevices');
+
+        multiStToggle.addEventListener('change', function() {
+            if (this.checked) {
+                deviceCountContainer.classList.add('active');
+                generateSpieltischeInputs(parseInt(deviceCountSelect.value));
+            } else {
+                deviceCountContainer.classList.remove('active');
+                generateSpieltischeInputs(1);
+            }
+        });
+
+        deviceCountSelect.addEventListener('change', function() {
+            generateSpieltischeInputs(parseInt(this.value));
+        });
+
+        function generateSpieltischeInputs(count) {
+            spieltischeDevices.innerHTML = '';
+            
+            for (let i = 1; i <= count; i++) {
+                const deviceHTML = `
+                    <div class="device-group">
+                        <div class="device-header">Spieltisch ${i}</div>
+                        <div class="input-group">
+                            <label for="kasse_st${i}">Kasseninhalt (€)</label>
+                            <input type="number" id="kasse_st${i}" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+                `;
+                spieltischeDevices.innerHTML += deviceHTML;
+            }
+        }
+
+        // Initialize with 1 device
+        generateSpieltischeInputs(1);
+
+        // ========== GEBÜHREN TOGGLES ==========
+        const gebuehrenGsgCheck = document.getElementById('gebuehren_gsg_check');
+        const gebuehrenGsgGroup = document.getElementById('gebuehren_gsg_group');
+        
+        gebuehrenGsgCheck.addEventListener('change', function() {
+            gebuehrenGsgGroup.style.display = this.checked ? 'block' : 'none';
+        });
+
+        const gebuehrenStCheck = document.getElementById('gebuehren_st_check');
+        const gebuehrenStGroup = document.getElementById('gebuehren_st_group');
+        
+        gebuehrenStCheck.addEventListener('change', function() {
+            gebuehrenStGroup.style.display = this.checked ? 'block' : 'none';
+        });
+
+        const gebuehrenGemCheck = document.getElementById('gebuehren_gem_check');
+        const gebuehrenGemGroup = document.getElementById('gebuehren_gem_group');
+        
+        gebuehrenGemCheck.addEventListener('change', function() {
+            gebuehrenGemGroup.style.display = this.checked ? 'block' : 'none';
+        });
+		
+		// ========== UNTERHALTUNGSGERÄTE TOGGLES ==========
+        const showUG1 = document.getElementById('showUG1');
+        const ugContainer1 = document.getElementById('ugContainer1');
+        showUG1.addEventListener('change', function() {
+            if (this.checked) {
+                ugContainer1.style.display = 'block';
+            } else {
+                ugContainer1.style.display = 'none';
+                document.getElementById('kasse_frei_gem1').value = '';
+            }
+        });
+
+        const showUG2 = document.getElementById('showUG2');
+        const ugContainer2 = document.getElementById('ugContainer2');
+        showUG2.addEventListener('change', function() {
+            if (this.checked) {
+                ugContainer2.style.display = 'block';
+            } else {
+                ugContainer2.style.display = 'none';
+                document.getElementById('kasse_frei_gem2').value = '';
+            }
+        });
+
+        const showUG3 = document.getElementById('showUG3');
+        const ugContainer3 = document.getElementById('ugContainer3');
+        showUG3.addEventListener('change', function() {
+            if (this.checked) {
+                ugContainer3.style.display = 'block';
+            } else {
+                ugContainer3.style.display = 'none';
+                document.getElementById('kasse_frei_gem3').value = '';
+            }
+        });
+
+        const showUG4 = document.getElementById('showUG4');
+        const ugContainer4 = document.getElementById('ugContainer4');
+        showUG4.addEventListener('change', function() {
+            if (this.checked) {
+                ugContainer4.style.display = 'block';
+            } else {
+                ugContainer4.style.display = 'none';
+                document.getElementById('kasse_frei_gem4').value = '';
+            }
+        });
+		
+		// ========== VGNST SLIDER UPDATE ==========
+        const vgnstGsg = document.getElementById('vgnst_gsg');
+        const vgnstGsgValue = document.getElementById('vgnst_gsg_value');
+        vgnstGsg.addEventListener('input', function() {
+            vgnstGsgValue.textContent = this.value;
+        });
+
+        const vgnstProzentSt = document.getElementById('vgnst_prozent_st');
+        const vgnstProzentStValue = document.getElementById('vgnst_prozent_st_value');
+        vgnstProzentSt.addEventListener('input', function() {
+            vgnstProzentStValue.textContent = this.value;
+        });
+
+        const vgnstGem = document.getElementById('vgnst_gem');
+        const vgnstGemValue = document.getElementById('vgnst_gem_value');
+        vgnstGem.addEventListener('input', function() {
+            vgnstGemValue.textContent = this.value;
+        });
+
+        // ========== SPIELTISCHE VGNST MODE TOGGLE (Sliding Pill) ==========
+        const vgnstToggleSwitch = document.getElementById('vgnstToggleSwitch');
+        const vgnstToggleSlider = document.getElementById('vgnstToggleSlider');
+        const vgnstToggleOptions = document.querySelectorAll('.vgnst-toggle-option');
+        const vgnstModeSt = document.getElementById('vgnst_mode_st');
+        const vgnstProzentGroupSt = document.getElementById('vgnst_prozent_group_st');
+        const vgnstPauschalGroupSt = document.getElementById('vgnst_pauschal_group_st');
+
+        vgnstToggleOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                
+                // Update active state
+                vgnstToggleOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Move slider
+                if (value === 'pauschal') {
+                    vgnstToggleSlider.classList.add('right');
+                } else {
+                    vgnstToggleSlider.classList.remove('right');
+                }
+                
+                // Update hidden input
+                vgnstModeSt.value = value;
+                
+                // Show/hide groups
+                if (value === 'pauschal') {
+                    vgnstProzentGroupSt.style.display = 'none';
+                    vgnstPauschalGroupSt.style.display = 'block';
+                } else {
+                    vgnstProzentGroupSt.style.display = 'block';
+                    vgnstPauschalGroupSt.style.display = 'none';
+                }
+            });
+        });
+
+
+
+        // ========== HELPER FUNCTIONS ==========
+        function formatEUR(value) {
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(value);
+        }
+
+        function scrollToResults(containerId) {
+            const container = document.getElementById(containerId);
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // ========== DATA STORAGE ==========
+        let gsgData = {
+            devices: [],
+            prozentWirt: 0,
+            gebuehren: 0,
+            nettoWirt: 0,
+            bruttoWirt: 0,
+            nettoAufsteller: 0,
+            bruttoAufsteller: 0
+        };
+
+        let stData = {
+            devices: [],
+            prozentWirt: 0,
+            gebuehren: 0,
+            nettoWirt: 0,
+            bruttoWirt: 0,
+            nettoAufsteller: 0,
+            bruttoAufsteller: 0
+        };
+
+        let gemData = {
+            devices: [],
+            prozentWirt: 0,
+            gebuehren: 0,
+            nettoWirt: 0,
+            bruttoWirt: 0,
+            nettoAufsteller: 0,
+            bruttoAufsteller: 0
+        };
+		
+		// ========== GSG BERECHNUNG ==========
+        function berechnenGSG() {
+            const isMulti = multiGsgToggle.checked;
+            const deviceCount = isMulti ? 2 : 1;
+            const vgnstProzent = parseFloat(document.getElementById('vgnst_gsg').value) / 100;
+            const prozentWirt = parseFloat(document.getElementById('prozent_gsg').value);
+            const gebuehren = gebuehrenGsgCheck.checked ? parseFloat(document.getElementById('gebuehren_gsg').value) || 0 : 0;
+
+            gsgData.devices = [];
+            gsgData.prozentWirt = prozentWirt;
+            gsgData.gebuehren = gebuehren;
+
+            if (isMulti) {
+                // Multi Mode: kasse_gsg1, kasse_gsg2
+                for (let i = 1; i <= deviceCount; i++) {
+                    const kasse = parseFloat(document.getElementById(`kasse_gsg${i}`).value) || 0;
+                    const fehlbetrag = parseFloat(document.getElementById(`fehlbetrag_gsg${i}`).value) || 0;
+                    
+                    // Nur hinzufügen wenn mindestens ein Wert > 0
+                    if (kasse > 0 || fehlbetrag > 0) {
+                        const brutto = kasse + fehlbetrag;
+                        const mwst = brutto * 0.19;
+                        const netto = brutto - mwst;
+                        const vgnst = netto * vgnstProzent;
+
+                        gsgData.devices.push({
+                            name: `GSG ${i}`,
+                            brutto: brutto,
+                            mwst: mwst,
+                            netto: netto,
+                            vgnst: vgnst
+                        });
+                    }
+                }
+            } else {
+                // Single Mode: kasse_gsg (ohne Nummer!)
+                const kasse = parseFloat(document.getElementById('kasse_gsg').value) || 0;
+                const fehlbetrag = parseFloat(document.getElementById('fehlbetrag_gsg').value) || 0;
+                
+                // Nur hinzufügen wenn mindestens ein Wert > 0
+                if (kasse > 0 || fehlbetrag > 0) {
+                    const brutto = kasse + fehlbetrag;
+                    const mwst = brutto * 0.19;
+                    const netto = brutto - mwst;
+                    const vgnst = netto * vgnstProzent;
+
+                    gsgData.devices.push({
+                        name: `GSG 1`,
+                        brutto: brutto,
+                        mwst: mwst,
+                        netto: netto,
+                        vgnst: vgnst
+                    });
+                }
+            }
+
+            // Gesamtberechnung
+            let totalNetto = 0;
+            gsgData.devices.forEach(device => {
+                totalNetto += device.netto;
+            });
+
+            const totalVgnst = gsgData.devices.reduce((sum, d) => sum + d.vgnst, 0);
+            const verbleibGesamt = totalNetto - totalVgnst - gebuehren;
+
+            gsgData.nettoWirt = verbleibGesamt * (prozentWirt / 100);
+            gsgData.bruttoWirt = gsgData.nettoWirt * 1.19;
+            gsgData.nettoAufsteller = verbleibGesamt * ((100 - prozentWirt) / 100);
+            gsgData.bruttoAufsteller = gsgData.nettoAufsteller * 1.19;
+        }
+
+        function showResultsGSG() {
+            berechnenGSG();
+            
+            // Nur Ergebnisse anzeigen wenn mindestens ein Gerät ausgefüllt ist
+            if (gsgData.devices.length === 0) {
+                alert('Bitte fülle mindestens ein Gerät aus!');
+                return;
+            }
+            
+            buildDeviceRowsGSG();
+
+            document.getElementById('netto_wirt_gsg').textContent = formatEUR(gsgData.nettoWirt);
+            document.getElementById('mwst_wirt_gsg').textContent = formatEUR(gsgData.nettoWirt * 0.19);
+            document.getElementById('brutto_wirt_gsg').textContent = formatEUR(gsgData.bruttoWirt);
+
+            document.getElementById('netto_aufsteller_gsg').textContent = formatEUR(gsgData.nettoAufsteller);
+            document.getElementById('mwst_aufsteller_gsg').textContent = formatEUR(gsgData.nettoAufsteller * 0.19);
+            document.getElementById('brutto_aufsteller_gsg').textContent = formatEUR(gsgData.bruttoAufsteller);
+
+            document.getElementById('resultsContainer_gsg').classList.add('show');
+            scrollToResults('resultsContainer_gsg');
+        }
+
+        function buildDeviceRowsGSG() {
+            const container = document.getElementById('deviceRows_gsg');
+            container.innerHTML = '';
+
+            const prozent = gsgData.prozentWirt;
+            const gebuehren = gsgData.gebuehren;
+            const gebuehrenProDevice = gsgData.devices.length > 0 ? gebuehren / gsgData.devices.length : 0;
+
+            // Wenn keine Geräte, verstecke Tabellenansicht-Button und Einzelgeräte-Section
+            if (gsgData.devices.length === 0) {
+                document.getElementById('section1_gsg').style.display = 'none';
+                document.getElementById('btnTableView_gsg').style.display = 'none';
+                return;
+            }
+            
+            // Section anzeigen wenn Geräte vorhanden
+            document.getElementById('section1_gsg').style.display = 'block';
+
+            gsgData.devices.forEach((device, index) => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (prozent / 100);
+
+                const cardHTML = `
+                    <div class="device-card ${index === 0 ? 'expanded' : ''}" data-device="${index}">
+                        <div class="device-card-header">
+                            <span class="device-card-title">${device.name}</span>
+                            <span class="device-card-toggle">▼</span>
+                        </div>
+                        <div class="device-card-body">
+                            <div class="device-card-content">
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Brutto Kasse</span>
+                                    <span class="device-detail-value positive">${formatEUR(device.brutto)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">19% MwSt</span>
+                                    <span class="device-detail-value negative">${formatEUR(device.mwst)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Netto Kasse</span>
+                                    <span class="device-detail-value positive">${formatEUR(device.netto)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">VgnSt (${parseFloat(document.getElementById('vgnst_gsg').value)}%)</span>
+                                    <span class="device-detail-value negative">${formatEUR(device.vgnst)}</span>
+                                </div>
+                                ${gebuehren > 0 ? `
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Gebühren (anteilig)</span>
+                                    <span class="device-detail-value negative">${formatEUR(gebuehrenProDevice)}</span>
+                                </div>
+                                ` : ''}
+                                <div class="device-detail-row" style="border-top: 2px solid var(--border-color); padding-top: 12px; margin-top: 8px;">
+                                    <span class="device-detail-label" style="font-weight: 600;">Verbleib zur Abrechnung</span>
+                                    <span class="device-detail-value positive" style="font-weight: 700;">${formatEUR(verbleib)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Anteil Wirt (${prozent.toFixed(2)}%)</span>
+                                    <span class="device-detail-value positive">${formatEUR(wirtAnteil)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+
+            // Add click handlers for cards
+            document.querySelectorAll('#deviceRows_gsg .device-card-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const card = this.closest('.device-card');
+                    card.classList.toggle('expanded');
+                });
+            });
+
+            document.getElementById('btnTableView_gsg').style.display = 'block';
+        }
+		
+        function buildOverviewTableGSG() {
+            const tbody = document.getElementById('overviewTableBody_gsg');
+            const table = document.getElementById('overviewTable_gsg');
+            tbody.innerHTML = '';
+            
+            if (!gsgData.devices || gsgData.devices.length === 0) return;
+            
+            const prozent = gsgData.prozentWirt;
+            const gebuehren = gsgData.gebuehren;
+            const gebuehrenProDevice = gsgData.devices.length > 0 ? gebuehren / gsgData.devices.length : 0;
+            const hasGebuehren = gebuehren > 0;
+            
+            // Show/hide Gebühren column
+            const gebuehrenCols = table.querySelectorAll('.gebuehren-col');
+            gebuehrenCols.forEach(col => {
+                col.style.display = hasGebuehren ? '' : 'none';
+            });
+            
+            let totalWirtAnteil = 0;
+            
+            gsgData.devices.forEach(device => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (prozent / 100);
+                totalWirtAnteil += wirtAnteil;
+                
+                const row = `
+                    <tr>
+                        <td>${device.name}</td>
+                        <td class="positive-val">${formatEUR(device.brutto)}</td>
+                        <td class="negative-val">${formatEUR(device.mwst)}</td>
+                        <td class="positive-val">${formatEUR(device.netto)}</td>
+                        <td class="negative-val">${formatEUR(device.vgnst)}</td>
+                        <td class="negative-val gebuehren-col" style="display: ${hasGebuehren ? '' : 'none'}">${formatEUR(gebuehrenProDevice)}</td>
+                        <td class="positive-val">${formatEUR(verbleib)}</td>
+                        <td class="positive-val">${prozent.toFixed(2)}%</td>
+                        <td class="positive-val">${formatEUR(wirtAnteil)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Summary rows
+            const wirtMwst = totalWirtAnteil * 0.19;
+            const wirtTotal = totalWirtAnteil + wirtMwst;
+            
+            const summaryRow = `
+                <tr class="summary-row">
+                    <td>Nettoanteil Wirt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(totalWirtAnteil)}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td>+ 19% MwSt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(wirtMwst)}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td>= Auszahlung Wirt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(wirtTotal)}</td>
+                </tr>
+            `;
+            tbody.innerHTML += summaryRow;
+        }
+
+        // ========== SPIELTISCHE BERECHNUNG ==========
+        function berechnenST() {
+            const isMulti = multiStToggle.checked;
+            const deviceCount = isMulti ? parseInt(deviceCountSelect.value) : 1;
+            const vgnstMode = document.getElementById('vgnst_mode_st').value;
+            const prozentWirt = parseFloat(document.getElementById('prozent_st').value);
+            const gebuehren = gebuehrenStCheck.checked ? parseFloat(document.getElementById('gebuehren_st').value) || 0 : 0;
+
+            stData.devices = [];
+            stData.prozentWirt = prozentWirt;
+            stData.gebuehren = gebuehren;
+
+            let totalVgnstPauschal = 0;
+            let filledDeviceCount = 0;
+
+            // Erst zählen wieviele Geräte tatsächlich ausgefüllt sind
+            for (let i = 1; i <= deviceCount; i++) {
+                const kasse = parseFloat(document.getElementById(`kasse_st${i}`).value) || 0;
+                if (kasse > 0) {
+                    filledDeviceCount++;
+                }
+            }
+
+            // VgnSt Pauschal auf ausgefüllte Geräte verteilen
+            if (vgnstMode === 'pauschal' && filledDeviceCount > 0) {
+                const vgnstPauschal = parseFloat(document.getElementById('vgnst_pauschal_st').value) || 0;
+                totalVgnstPauschal = vgnstPauschal / filledDeviceCount;
+            }
+
+            for (let i = 1; i <= deviceCount; i++) {
+                const kasse = parseFloat(document.getElementById(`kasse_st${i}`).value) || 0;
+                
+                // Nur hinzufügen wenn Wert > 0
+                if (kasse > 0) {
+                    const brutto = kasse;
+                    const mwst = brutto * 0.19;
+                    const netto = brutto - mwst;
+
+                    let vgnst = 0;
+                    if (vgnstMode === 'prozent') {
+                        const vgnstProzent = parseFloat(document.getElementById('vgnst_prozent_st').value) / 100;
+                        vgnst = netto * vgnstProzent;
+                    } else {
+                        vgnst = totalVgnstPauschal;
+                    }
+
+                    stData.devices.push({
+                        name: `Spieltisch ${i}`,
+                        brutto: brutto,
+                        mwst: mwst,
+                        netto: netto,
+                        vgnst: vgnst
+                    });
+                }
+            }
+
+            // Gesamtberechnung
+            let totalNetto = 0;
+            stData.devices.forEach(device => {
+                totalNetto += device.netto;
+            });
+
+            const totalVgnst = stData.devices.reduce((sum, d) => sum + d.vgnst, 0);
+            const verbleibGesamt = totalNetto - totalVgnst - gebuehren;
+
+            stData.nettoWirt = verbleibGesamt * (prozentWirt / 100);
+            stData.bruttoWirt = stData.nettoWirt * 1.19;
+            stData.nettoAufsteller = verbleibGesamt * ((100 - prozentWirt) / 100);
+            stData.bruttoAufsteller = stData.nettoAufsteller * 1.19;
+        }
+
+        function showResultsST() {
+            berechnenST();
+            
+            // Nur Ergebnisse anzeigen wenn mindestens ein Tisch ausgefüllt ist
+            if (stData.devices.length === 0) {
+                alert('Bitte fülle mindestens einen Spieltisch aus!');
+                return;
+            }
+            
+            buildDeviceRowsST();
+
+            document.getElementById('netto_wirt_st').textContent = formatEUR(stData.nettoWirt);
+            document.getElementById('mwst_wirt_st').textContent = formatEUR(stData.nettoWirt * 0.19);
+            document.getElementById('brutto_wirt_st').textContent = formatEUR(stData.bruttoWirt);
+
+            document.getElementById('netto_aufsteller_st').textContent = formatEUR(stData.nettoAufsteller);
+            document.getElementById('mwst_aufsteller_st').textContent = formatEUR(stData.nettoAufsteller * 0.19);
+            document.getElementById('brutto_aufsteller_st').textContent = formatEUR(stData.bruttoAufsteller);
+
+            document.getElementById('resultsContainer_st').classList.add('show');
+            scrollToResults('resultsContainer_st');
+        }
+
+        function buildDeviceRowsST() {
+            const container = document.getElementById('deviceRows_st');
+            container.innerHTML = '';
+
+            const prozent = stData.prozentWirt;
+            const gebuehren = stData.gebuehren;
+            const gebuehrenProDevice = stData.devices.length > 0 ? gebuehren / stData.devices.length : 0;
+            const vgnstMode = document.getElementById('vgnst_mode_st').value;
+            const vgnstLabel = vgnstMode === 'pauschal' ? 'VgnSt (pauschal)' : `VgnSt (${parseFloat(document.getElementById('vgnst_prozent_st').value)}%)`;
+
+            // Wenn keine Geräte, verstecke Tabellenansicht-Button und Einzelgeräte-Section
+            if (stData.devices.length === 0) {
+                document.getElementById('section1_st').style.display = 'none';
+                document.getElementById('btnTableView_st').style.display = 'none';
+                return;
+            }
+            
+            // Section anzeigen wenn Geräte vorhanden
+            document.getElementById('section1_st').style.display = 'block';
+
+            stData.devices.forEach((device, index) => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (prozent / 100);
+
+                const cardHTML = `
+                    <div class="device-card ${index === 0 ? 'expanded' : ''}" data-device="${index}">
+                        <div class="device-card-header">
+                            <span class="device-card-title">${device.name}</span>
+                            <span class="device-card-toggle">▼</span>
+                        </div>
+                        <div class="device-card-body">
+                            <div class="device-card-content">
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Brutto Kasse</span>
+                                    <span class="device-detail-value positive">${formatEUR(device.brutto)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">- 19% MwSt</span>
+                                    <span class="device-detail-value negative">${formatEUR(device.mwst)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Netto Kasse</span>
+                                    <span class="device-detail-value positive">${formatEUR(device.netto)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">${vgnstLabel}</span>
+                                    <span class="device-detail-value negative">${formatEUR(device.vgnst)}</span>
+                                </div>
+                                ${gebuehren > 0 ? `
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Gebühren (anteilig)</span>
+                                    <span class="device-detail-value negative">${formatEUR(gebuehrenProDevice)}</span>
+                                </div>
+                                ` : ''}
+                                <div class="device-detail-row" style="border-top: 2px solid var(--border-color); padding-top: 12px; margin-top: 8px;">
+                                    <span class="device-detail-label" style="font-weight: 600;">Verbleib zur Abrechnung</span>
+                                    <span class="device-detail-value positive" style="font-weight: 700;">${formatEUR(verbleib)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Anteil Wirt (${prozent.toFixed(2)}%)</span>
+                                    <span class="device-detail-value positive">${formatEUR(wirtAnteil)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+
+            // Add click handlers for cards
+            document.querySelectorAll('#deviceRows_st .device-card-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const card = this.closest('.device-card');
+                    card.classList.toggle('expanded');
+                });
+            });
+
+            document.getElementById('btnTableView_st').style.display = 'block';
+        }
+
+        function buildOverviewTableST() {
+            const tbody = document.getElementById('overviewTableBody_st');
+            const table = document.getElementById('overviewTable_st');
+            tbody.innerHTML = '';
+            
+            if (!stData.devices || stData.devices.length === 0) return;
+            
+            const prozent = stData.prozentWirt;
+            const gebuehren = stData.gebuehren;
+            const gebuehrenProDevice = stData.devices.length > 0 ? gebuehren / stData.devices.length : 0;
+            const hasGebuehren = gebuehren > 0;
+            
+            // Show/hide Gebühren column
+            const gebuehrenCols = table.querySelectorAll('.gebuehren-col');
+            gebuehrenCols.forEach(col => {
+                col.style.display = hasGebuehren ? '' : 'none';
+            });
+            
+            let totalWirtAnteil = 0;
+            
+            stData.devices.forEach(device => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (prozent / 100);
+                totalWirtAnteil += wirtAnteil;
+                
+                const row = `
+                    <tr>
+                        <td>${device.name}</td>
+                        <td class="positive-val">${formatEUR(device.brutto)}</td>
+                        <td class="negative-val">${formatEUR(device.mwst)}</td>
+                        <td class="positive-val">${formatEUR(device.netto)}</td>
+                        <td class="negative-val">${formatEUR(device.vgnst)}</td>
+                        <td class="negative-val gebuehren-col" style="display: ${hasGebuehren ? '' : 'none'}">${formatEUR(gebuehrenProDevice)}</td>
+                        <td class="positive-val">${formatEUR(verbleib)}</td>
+                        <td class="positive-val">${prozent.toFixed(2)}%</td>
+                        <td class="positive-val">${formatEUR(wirtAnteil)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Summary rows
+            const wirtMwst = totalWirtAnteil * 0.19;
+            const wirtTotal = totalWirtAnteil + wirtMwst;
+            
+            const summaryRow = `
+                <tr class="summary-row">
+                    <td>Nettoanteil Wirt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(totalWirtAnteil)}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td>+ 19% MwSt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(wirtMwst)}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td>= Auszahlung Wirt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(wirtTotal)}</td>
+                </tr>
+            `;
+            tbody.innerHTML += summaryRow;
+        }
+		
+		// ========== GSG GEMISCHT BERECHNUNG ==========
+        function berechnenGEM() {
+            const vgnstProzent = parseFloat(document.getElementById('vgnst_gem').value) / 100;
+            const prozentWirt = parseFloat(document.getElementById('prozent_gem').value);
+            const gebuehren = gebuehrenGemCheck.checked ? parseFloat(document.getElementById('gebuehren_gem').value) || 0 : 0;
+
+            gemData.devices = [];
+            gemData.prozentWirt = prozentWirt;
+            gemData.gebuehren = gebuehren;
+
+            // GSG 1 & 2 (VgnSt-pflichtig) - nur wenn ausgefüllt
+            for (let i = 1; i <= 2; i++) {
+                const kasse = parseFloat(document.getElementById(`kasse_gsg_gem${i}`).value) || 0;
+                const fehlbetrag = parseFloat(document.getElementById(`fehlbetrag_gsg_gem${i}`).value) || 0;
+                
+                // Nur hinzufügen wenn mindestens ein Wert > 0
+                if (kasse > 0 || fehlbetrag > 0) {
+                    const brutto = kasse + fehlbetrag;
+                    const mwst = brutto * 0.19;
+                    const netto = brutto - mwst;
+                    const vgnst = netto * vgnstProzent;
+
+                    gemData.devices.push({
+                        name: `GSG ${i}`,
+                        brutto: brutto,
+                        mwst: mwst,
+                        netto: netto,
+                        vgnst: vgnst,
+                        type: 'gsg'
+                    });
+                }
+            }
+
+            // Unterhaltungsgeräte (UG 1-4) - nur wenn ausgefüllt
+            for (let i = 1; i <= 4; i++) {
+                const kasse = parseFloat(document.getElementById(`kasse_frei_gem${i}`).value) || 0;
+                
+                // Nur hinzufügen wenn Wert > 0
+                if (kasse > 0) {
+                    const brutto = kasse;
+                    const mwst = brutto * 0.19;
+                    const netto = brutto - mwst;
+
+                    gemData.devices.push({
+                        name: `UG ${i}`,
+                        brutto: brutto,
+                        mwst: mwst,
+                        netto: netto,
+                        vgnst: 0,
+                        type: 'ug'
+                    });
+                }
+            }
+
+            // Gesamtberechnung
+            let totalNetto = 0;
+            gemData.devices.forEach(device => {
+                totalNetto += device.netto;
+            });
+
+            const totalVgnst = gemData.devices.reduce((sum, d) => sum + d.vgnst, 0);
+            const verbleibGesamt = totalNetto - totalVgnst - gebuehren;
+
+            gemData.nettoWirt = verbleibGesamt * (prozentWirt / 100);
+            gemData.bruttoWirt = gemData.nettoWirt * 1.19;
+            gemData.nettoAufsteller = verbleibGesamt * ((100 - prozentWirt) / 100);
+            gemData.bruttoAufsteller = gemData.nettoAufsteller * 1.19;
+        }
+        function showResultsGEM() {
+            berechnenGEM();
+            
+            // Nur Ergebnisse anzeigen wenn mindestens ein Gerät ausgefüllt ist
+            if (gemData.devices.length === 0) {
+                alert('Bitte fülle mindestens ein Gerät aus!');
+                return;
+            }
+            
+            buildDeviceCardsGEM();
+
+            document.getElementById('netto_wirt_gem').textContent = formatEUR(gemData.nettoWirt);
+            document.getElementById('mwst_wirt_gem').textContent = formatEUR(gemData.nettoWirt * 0.19);
+            document.getElementById('brutto_wirt_gem').textContent = formatEUR(gemData.bruttoWirt);
+
+            document.getElementById('netto_aufsteller_gem').textContent = formatEUR(gemData.nettoAufsteller);
+            document.getElementById('mwst_aufsteller_gem').textContent = formatEUR(gemData.nettoAufsteller * 0.19);
+            document.getElementById('brutto_aufsteller_gem').textContent = formatEUR(gemData.bruttoAufsteller);
+
+            document.getElementById('resultsContainer_gem').classList.add('show');
+            scrollToResults('resultsContainer_gem');
+        }
+
+        function buildDeviceCardsGEM() {
+            const container = document.getElementById('deviceCards_gem');
+            container.innerHTML = '';
+
+            const prozent = gemData.prozentWirt;
+            const gebuehren = gemData.gebuehren;
+            const gebuehrenProDevice = gemData.devices.length > 0 ? gebuehren / gemData.devices.length : 0;
+
+            // Wenn keine Geräte, verstecke Tabellenansicht-Button und Einzelgeräte-Section
+            if (gemData.devices.length === 0) {
+                document.getElementById('section1_gem').style.display = 'none';
+                document.getElementById('btnTableView_gem').style.display = 'none';
+                return;
+            }
+            
+            // Section anzeigen wenn Geräte vorhanden
+            document.getElementById('section1_gem').style.display = 'block';
+
+            gemData.devices.forEach((device, index) => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (prozent / 100);
+                const vgnstLabel = device.type === 'gsg' ? `VgnSt (${parseFloat(document.getElementById('vgnst_gem').value)}%)` : 'VgnSt (befreit)';
+
+                const cardHTML = `
+                    <div class="device-card ${index === 0 ? 'expanded' : ''}" data-device="${index}">
+                        <div class="device-card-header">
+                            <span class="device-card-title">${device.name}</span>
+                            <span class="device-card-toggle">▼</span>
+                        </div>
+                        <div class="device-card-body">
+                            <div class="device-card-content">
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Brutto Kasse</span>
+                                    <span class="device-detail-value positive">${formatEUR(device.brutto)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">19% MwSt</span>
+                                    <span class="device-detail-value negative">${formatEUR(device.mwst)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Netto Kasse</span>
+                                    <span class="device-detail-value positive">${formatEUR(device.netto)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">${vgnstLabel}</span>
+                                    <span class="device-detail-value negative">${formatEUR(device.vgnst)}</span>
+                                </div>
+                                ${gebuehren > 0 ? `
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Gebühren (anteilig)</span>
+                                    <span class="device-detail-value negative">${formatEUR(gebuehrenProDevice)}</span>
+                                </div>
+                                ` : ''}
+                                <div class="device-detail-row" style="border-top: 2px solid var(--border-color); padding-top: 12px; margin-top: 8px;">
+                                    <span class="device-detail-label" style="font-weight: 600;">Verbleib zur Abrechnung</span>
+                                    <span class="device-detail-value positive" style="font-weight: 700;">${formatEUR(verbleib)}</span>
+                                </div>
+                                <div class="device-detail-row">
+                                    <span class="device-detail-label">Anteil Wirt (${prozent.toFixed(2)}%)</span>
+                                    <span class="device-detail-value positive">${formatEUR(wirtAnteil)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+
+            // Add click handlers for cards
+            document.querySelectorAll('#deviceCards_gem .device-card-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const card = this.closest('.device-card');
+                    card.classList.toggle('expanded');
+                });
+            });
+
+            document.getElementById('btnTableView_gem').style.display = 'block';
+        }
+
+        function buildOverviewTableGEM() {
+            const tbody = document.getElementById('overviewTableBody_gem');
+            const table = document.getElementById('overviewTable_gem');
+            tbody.innerHTML = '';
+            
+            if (!gemData.devices || gemData.devices.length === 0) return;
+            
+            const prozent = gemData.prozentWirt;
+            const gebuehren = gemData.gebuehren;
+            const gebuehrenProDevice = gemData.devices.length > 0 ? gebuehren / gemData.devices.length : 0;
+            const hasGebuehren = gebuehren > 0;
+            
+            // Show/hide Gebühren column
+            const gebuehrenCols = table.querySelectorAll('.gebuehren-col');
+            gebuehrenCols.forEach(col => {
+                col.style.display = hasGebuehren ? '' : 'none';
+            });
+            
+            let totalWirtAnteil = 0;
+            
+            gemData.devices.forEach(device => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (prozent / 100);
+                totalWirtAnteil += wirtAnteil;
+                
+                const row = `
+                    <tr>
+                        <td>${device.name}</td>
+                        <td class="positive-val">${formatEUR(device.brutto)}</td>
+                        <td class="negative-val">${formatEUR(device.mwst)}</td>
+                        <td class="positive-val">${formatEUR(device.netto)}</td>
+                        <td class="negative-val">${formatEUR(device.vgnst)}</td>
+                        <td class="negative-val gebuehren-col" style="display: ${hasGebuehren ? '' : 'none'}">${formatEUR(gebuehrenProDevice)}</td>
+                        <td class="positive-val">${formatEUR(verbleib)}</td>
+                        <td class="positive-val">${prozent.toFixed(2)}%</td>
+                        <td class="positive-val">${formatEUR(wirtAnteil)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Summary rows
+            const wirtMwst = totalWirtAnteil * 0.19;
+            const wirtTotal = totalWirtAnteil + wirtMwst;
+            
+            const summaryRow = `
+                <tr class="summary-row">
+                    <td>Nettoanteil Wirt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(totalWirtAnteil)}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td>+ 19% MwSt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(wirtMwst)}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td>= Auszahlung Wirt</td>
+                    <td colspan="${hasGebuehren ? 7 : 6}"></td>
+                    <td class="positive-val">${formatEUR(wirtTotal)}</td>
+                </tr>
+            `;
+            tbody.innerHTML += summaryRow;
+        }
+
+        // ========== BUTTON EVENT LISTENERS ==========
+        document.getElementById('berechnen_gsg').addEventListener('click', showResultsGSG);
+        document.getElementById('berechnen_st').addEventListener('click', showResultsST);
+        document.getElementById('berechnen_gem').addEventListener('click', showResultsGEM);
+
+        // ========== TABLE VIEW OVERLAYS ==========
+        // GSG Tabellenansicht
+        const btnTableView_gsg = document.getElementById('btnTableView_gsg');
+        const tableViewOverlay_gsg = document.getElementById('tableViewOverlay_gsg');
+        const closeTableView_gsg = document.getElementById('closeTableView_gsg');
+
+        btnTableView_gsg.addEventListener('click', () => {
+            buildOverviewTableGSG();
+            tableViewOverlay_gsg.classList.add('active');
+        });
+
+        closeTableView_gsg.addEventListener('click', () => {
+            tableViewOverlay_gsg.classList.remove('active');
+        });
+
+        tableViewOverlay_gsg.addEventListener('click', (e) => {
+            if (e.target === tableViewOverlay_gsg) {
+                tableViewOverlay_gsg.classList.remove('active');
+            }
+        });
+
+        // Spieltische Tabellenansicht
+        const btnTableView_st = document.getElementById('btnTableView_st');
+        const tableViewOverlay_st = document.getElementById('tableViewOverlay_st');
+        const closeTableView_st = document.getElementById('closeTableView_st');
+
+        btnTableView_st.addEventListener('click', () => {
+            buildOverviewTableST();
+            tableViewOverlay_st.classList.add('active');
+        });
+
+        closeTableView_st.addEventListener('click', () => {
+            tableViewOverlay_st.classList.remove('active');
+        });
+
+        tableViewOverlay_st.addEventListener('click', (e) => {
+            if (e.target === tableViewOverlay_st) {
+                tableViewOverlay_st.classList.remove('active');
+            }
+        });
+
+        // GSG Gemischt Tabellenansicht
+        const btnTableView_gem = document.getElementById('btnTableView_gem');
+        const tableViewOverlay_gem = document.getElementById('tableViewOverlay_gem');
+        const closeTableView_gem = document.getElementById('closeTableView_gem');
+
+        btnTableView_gem.addEventListener('click', () => {
+            buildOverviewTableGEM();
+            tableViewOverlay_gem.classList.add('active');
+        });
+
+        closeTableView_gem.addEventListener('click', () => {
+            tableViewOverlay_gem.classList.remove('active');
+        });
+
+        tableViewOverlay_gem.addEventListener('click', (e) => {
+            if (e.target === tableViewOverlay_gem) {
+                tableViewOverlay_gem.classList.remove('active');
+            }
+        });
+
+        // ========== PDF EXPORT FUNCTIONS ==========
+        function generatePDF_GSG() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const datum = new Date().toLocaleDateString('de-DE');
+            
+            // Header
+            doc.setFontSize(18);
+            doc.text('Abrechnung Geldspielgeräte', 105, 20, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text(`Datum: ${datum}`, 105, 28, { align: 'center' });
+
+            let yPos = 45;
+
+            // Einzelgeräte Tabelle
+            doc.setFontSize(12);
+            doc.text('Einzelgeräte Übersicht', 14, yPos);
+            yPos += 8;
+
+            doc.setFontSize(9);
+            const tableHeaders = ['Gerät', 'Brutto', 'MwSt', 'Netto', 'VgnSt', 'Verbleib', '%', 'Wirt-Anteil'];
+            const colWidths = [30, 22, 22, 22, 22, 25, 15, 25];
+            
+            if (gsgData.gebuehren > 0) {
+                tableHeaders.splice(5, 0, 'Gebühren');
+                colWidths.splice(5, 0, 22);
+            }
+
+            let xPos = 14;
+            tableHeaders.forEach((header, i) => {
+                doc.text(header, xPos, yPos);
+                xPos += colWidths[i];
+            });
+            yPos += 6;
+
+            const gebuehrenProDevice = gsgData.devices.length > 0 ? gsgData.gebuehren / gsgData.devices.length : 0;
+            
+            gsgData.devices.forEach(device => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (gsgData.prozentWirt / 100);
+
+                xPos = 14;
+                const values = [
+                    device.name,
+                    formatEUR(device.brutto),
+                    formatEUR(device.mwst),
+                    formatEUR(device.netto),
+                    formatEUR(device.vgnst),
+                    formatEUR(verbleib),
+                    `${gsgData.prozentWirt.toFixed(0)}%`,
+                    formatEUR(wirtAnteil)
+                ];
+
+                if (gsgData.gebuehren > 0) {
+                    values.splice(5, 0, formatEUR(gebuehrenProDevice));
+                }
+
+                values.forEach((val, i) => {
+                    doc.text(val.toString(), xPos, yPos);
+                    xPos += colWidths[i];
+                });
+                yPos += 6;
+            });
+
+            // Summary
+            yPos += 5;
+            doc.setFontSize(10);
+            const totalWirtAnteil = gsgData.devices.reduce((sum, device) => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                return sum + (verbleib * (gsgData.prozentWirt / 100));
+            }, 0);
+            const wirtMwst = totalWirtAnteil * 0.19;
+            const wirtTotal = totalWirtAnteil + wirtMwst;
+
+            doc.text(`Nettoanteil Wirt: ${formatEUR(totalWirtAnteil)}`, 14, yPos);
+            yPos += 6;
+            doc.text(`+ 19% MwSt: ${formatEUR(wirtMwst)}`, 14, yPos);
+            yPos += 6;
+            doc.setFont(undefined, 'bold');
+            doc.text(`= Auszahlung Wirt: ${formatEUR(wirtTotal)}`, 14, yPos);
+            doc.setFont(undefined, 'normal');
+
+            yPos += 15;
+
+            // Wirt & Aufsteller
+            doc.setFontSize(12);
+            doc.text('Auszahlungen', 14, yPos);
+            yPos += 8;
+
+            doc.setFontSize(10);
+            doc.text(`Wirt (Brutto): ${formatEUR(gsgData.bruttoWirt)}`, 14, yPos);
+            yPos += 6;
+            doc.text(`Aufsteller (Brutto): ${formatEUR(gsgData.bruttoAufsteller)}`, 14, yPos);
+
+            doc.save(`GSG_Abrechnung_${datum.replace(/\./g, '-')}.pdf`);
+        }
+
+        function generatePDF_ST() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const datum = new Date().toLocaleDateString('de-DE');
+            
+            doc.setFontSize(18);
+            doc.text('Abrechnung Spieltische', 105, 20, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text(`Datum: ${datum}`, 105, 28, { align: 'center' });
+
+            let yPos = 45;
+
+            doc.setFontSize(12);
+            doc.text('Einzelgeräte Übersicht', 14, yPos);
+            yPos += 8;
+
+            doc.setFontSize(9);
+            const tableHeaders = ['Tisch', 'Brutto', 'MwSt', 'Netto', 'VgnSt', 'Verbleib', '%', 'Wirt-Anteil'];
+            const colWidths = [30, 22, 22, 22, 22, 25, 15, 25];
+            
+            if (stData.gebuehren > 0) {
+                tableHeaders.splice(5, 0, 'Gebühren');
+                colWidths.splice(5, 0, 22);
+            }
+
+            let xPos = 14;
+            tableHeaders.forEach((header, i) => {
+                doc.text(header, xPos, yPos);
+                xPos += colWidths[i];
+            });
+            yPos += 6;
+
+            const gebuehrenProDevice = stData.devices.length > 0 ? stData.gebuehren / stData.devices.length : 0;
+            
+            stData.devices.forEach(device => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (stData.prozentWirt / 100);
+
+                xPos = 14;
+                const values = [
+                    device.name,
+                    formatEUR(device.brutto),
+                    formatEUR(device.mwst),
+                    formatEUR(device.netto),
+                    formatEUR(device.vgnst),
+                    formatEUR(verbleib),
+                    `${stData.prozentWirt.toFixed(0)}%`,
+                    formatEUR(wirtAnteil)
+                ];
+
+                if (stData.gebuehren > 0) {
+                    values.splice(5, 0, formatEUR(gebuehrenProDevice));
+                }
+
+                values.forEach((val, i) => {
+                    doc.text(val.toString(), xPos, yPos);
+                    xPos += colWidths[i];
+                });
+                yPos += 6;
+            });
+
+            yPos += 5;
+            doc.setFontSize(10);
+            const totalWirtAnteil = stData.devices.reduce((sum, device) => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                return sum + (verbleib * (stData.prozentWirt / 100));
+            }, 0);
+            const wirtMwst = totalWirtAnteil * 0.19;
+            const wirtTotal = totalWirtAnteil + wirtMwst;
+
+            doc.text(`Nettoanteil Wirt: ${formatEUR(totalWirtAnteil)}`, 14, yPos);
+            yPos += 6;
+            doc.text(`+ 19% MwSt: ${formatEUR(wirtMwst)}`, 14, yPos);
+            yPos += 6;
+            doc.setFont(undefined, 'bold');
+            doc.text(`= Auszahlung Wirt: ${formatEUR(wirtTotal)}`, 14, yPos);
+            doc.setFont(undefined, 'normal');
+
+            yPos += 15;
+
+            doc.setFontSize(12);
+            doc.text('Auszahlungen', 14, yPos);
+            yPos += 8;
+
+            doc.setFontSize(10);
+            doc.text(`Wirt (Brutto): ${formatEUR(stData.bruttoWirt)}`, 14, yPos);
+            yPos += 6;
+            doc.text(`Aufsteller (Brutto): ${formatEUR(stData.bruttoAufsteller)}`, 14, yPos);
+
+            doc.save(`Spieltische_Abrechnung_${datum.replace(/\./g, '-')}.pdf`);
+        }
+
+        function generatePDF_GEM() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const datum = new Date().toLocaleDateString('de-DE');
+            
+            doc.setFontSize(18);
+            doc.text('Abrechnung GSG Gemischt', 105, 20, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text(`Datum: ${datum}`, 105, 28, { align: 'center' });
+
+            let yPos = 45;
+
+            doc.setFontSize(12);
+            doc.text('Einzelgeräte Übersicht', 14, yPos);
+            yPos += 8;
+
+            doc.setFontSize(9);
+            const tableHeaders = ['Gerät', 'Brutto', 'MwSt', 'Netto', 'VgnSt', 'Verbleib', '%', 'Wirt-Anteil'];
+            const colWidths = [30, 22, 22, 22, 22, 25, 15, 25];
+            
+            if (gemData.gebuehren > 0) {
+                tableHeaders.splice(5, 0, 'Gebühren');
+                colWidths.splice(5, 0, 22);
+            }
+
+            let xPos = 14;
+            tableHeaders.forEach((header, i) => {
+                doc.text(header, xPos, yPos);
+                xPos += colWidths[i];
+            });
+            yPos += 6;
+
+            const gebuehrenProDevice = gemData.devices.length > 0 ? gemData.gebuehren / gemData.devices.length : 0;
+            
+            gemData.devices.forEach(device => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                const wirtAnteil = verbleib * (gemData.prozentWirt / 100);
+
+                xPos = 14;
+                const values = [
+                    device.name,
+                    formatEUR(device.brutto),
+                    formatEUR(device.mwst),
+                    formatEUR(device.netto),
+                    formatEUR(device.vgnst),
+                    formatEUR(verbleib),
+                    `${gemData.prozentWirt.toFixed(0)}%`,
+                    formatEUR(wirtAnteil)
+                ];
+
+                if (gemData.gebuehren > 0) {
+                    values.splice(5, 0, formatEUR(gebuehrenProDevice));
+                }
+
+                values.forEach((val, i) => {
+                    doc.text(val.toString(), xPos, yPos);
+                    xPos += colWidths[i];
+                });
+                yPos += 6;
+            });
+
+            yPos += 5;
+            doc.setFontSize(10);
+            const totalWirtAnteil = gemData.devices.reduce((sum, device) => {
+                const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                return sum + (verbleib * (gemData.prozentWirt / 100));
+            }, 0);
+            const wirtMwst = totalWirtAnteil * 0.19;
+            const wirtTotal = totalWirtAnteil + wirtMwst;
+
+            doc.text(`Nettoanteil Wirt: ${formatEUR(totalWirtAnteil)}`, 14, yPos);
+            yPos += 6;
+            doc.text(`+ 19% MwSt: ${formatEUR(wirtMwst)}`, 14, yPos);
+            yPos += 6;
+            doc.setFont(undefined, 'bold');
+            doc.text(`= Auszahlung Wirt: ${formatEUR(wirtTotal)}`, 14, yPos);
+            doc.setFont(undefined, 'normal');
+
+            yPos += 15;
+
+            doc.setFontSize(12);
+            doc.text('Auszahlungen', 14, yPos);
+            yPos += 8;
+
+            doc.setFontSize(10);
+            doc.text(`Wirt (Brutto): ${formatEUR(gemData.bruttoWirt)}`, 14, yPos);
+            yPos += 6;
+            doc.text(`Aufsteller (Brutto): ${formatEUR(gemData.bruttoAufsteller)}`, 14, yPos);
+
+            doc.save(`GSG_Gemischt_Abrechnung_${datum.replace(/\./g, '-')}.pdf`);
+        }
+
+        document.getElementById('exportPDF_gsg').addEventListener('click', generatePDF_GSG);
+        document.getElementById('exportPDF_st').addEventListener('click', generatePDF_ST);
+        document.getElementById('exportPDF_gem').addEventListener('click', generatePDF_GEM);
+    </script>
+</body>
+</html>
+
