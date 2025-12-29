@@ -2809,11 +2809,10 @@
                 }
             }
 
-            // VgnSt Pauschal auf ausgefüllte Geräte verteilen
-            if (vgnstMode === 'pauschal' && filledDeviceCount > 0) {
-                const vgnstPauschal = parseFloat(document.getElementById('vgnst_pauschal_st').value) || 0;
-                totalVgnstPauschal = vgnstPauschal / filledDeviceCount;
-            }
+            // VgnSt Pauschal: Jedes Gerät bekommt den vollen Betrag
+if (vgnstMode === 'pauschal') {
+    totalVgnstPauschal = parseFloat(document.getElementById('vgnst_pauschal_st').value) || 0;
+}
 
             for (let i = 1; i <= deviceCount; i++) {
                 const kasse = parseFloat(document.getElementById(`kasse_st${i}`).value) || 0;
