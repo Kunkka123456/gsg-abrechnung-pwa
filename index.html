@@ -29,7 +29,7 @@
             --shadow: 0 2px 8px rgba(0,0,0,0.08);
             --header-bg: #2d3748;
             --header-text: #ffffff;
-            --accent: #3182ce;
+            --accent: #0f766e;
             --negative: #e53e3e;
             --neutral: #718096;
         }
@@ -45,7 +45,7 @@
             --shadow: 0 2px 8px rgba(0,0,0,0.3);
             --header-bg: #1a202c;
             --header-text: #f7fafc;
-            --accent: #4299e1;
+            --accent: #14b8a6;
             --negative: #fc8181;
             --neutral: #a0aec0;
         }
@@ -198,15 +198,14 @@
         }
         
         .header {
-            background: var(--header-bg);
-            color: var(--header-text);
-            padding: 20px;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background-color 0.3s ease;
-        }
+    background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+    color: #d4af37;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
         
         .header-content {
             max-width: 800px;
@@ -222,20 +221,21 @@
         }
         
         .theme-toggle {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: var(--header-text);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: background 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        
+    background: rgba(212, 175, 55, 0.2);
+    border: none;
+    color: #d4af37;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background: rgba(212, 175, 55, 0.3);
+    transform: scale(1.1);
+} 
+
         .tab-content {
             display: none;
         }
@@ -400,7 +400,7 @@
         }
         
         .bg-positive {
-            background: linear-gradient(135deg, #90ee90 0%, #7dd87d 100%);
+            background: linear-gradient(135deg, #99f6e4 0%, #5eead4 100%);
         }
         
         .bg-positive h3,
@@ -410,7 +410,7 @@
         }
         
         .bg-negative {
-            background: linear-gradient(135deg, #87ceeb 0%, #6ab9e0 100%);
+            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
         }
         
         .bg-negative h3,
@@ -419,16 +419,24 @@
             color: #1a202c;
         }
 
+        [data-theme="dark"] .bg-positive {
+            background: linear-gradient(135deg, #115e59 0%, #134e4a 100%);
+        }
+
         [data-theme="dark"] .bg-positive h3,
         [data-theme="dark"] .bg-positive .result-label,
         [data-theme="dark"] .bg-positive .result-value {
-            color: #0d4d0d;
+            color: #99f6e4;
+        }
+
+        [data-theme="dark"] .bg-negative {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
         }
 
         [data-theme="dark"] .bg-negative h3,
         [data-theme="dark"] .bg-negative .result-label,
         [data-theme="dark"] .bg-negative .result-value {
-            color: #0a3a52;
+            color: #bfdbfe;
         }
         
         .bg-neutral {
@@ -1094,6 +1102,502 @@
                 max-width: 98vw;
             }
         }
+    
+        /* Hamburger Menu Styles */
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hamburger-btn {
+    background: none;
+    border: none;
+    color: #d4af37;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.hamburger-btn:hover {
+    transform: scale(1.1);
+    color: #fbbf24;
+}
+
+        .hamburger-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .menu-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            z-index: 201;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        }
+
+        .menu-sidebar.active {
+            left: 0;
+        }
+
+        .menu-header {
+            background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+            padding: 20px;
+            color: #d4af37;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .menu-items {
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            color: var(--text-primary);
+            font-size: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-item:hover {
+            background-color: rgba(15, 118, 110, 0.2);
+        }
+
+        /* Fullscreen Views */
+        .fullscreen-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-primary);
+            z-index: 150;
+            overflow-y: auto;
+        }
+
+        .fullscreen-view.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fullscreen-header {
+            background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .fullscreen-header h2 {
+            color: #d4af37;
+            font-size: 20px;
+            flex: 1;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #d4af37;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+        }
+
+        .fullscreen-content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Search Field */
+        .search-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* History List */
+        .history-list {
+            margin-bottom: 20px;
+        }
+
+        /* Aufstellplatz Container mit Reset Button */
+        .aufstellplatz-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .aufstellplatz-container input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.aufstellplatz-container input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.aufstellplatz-container input::placeholder {
+    color: #a0aec0;
+}
+
+        .reset-btn {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .reset-btn:hover {
+            border-color: #0f766e;
+            color: #0f766e;
+            transform: rotate(180deg);
+        }
+
+        .reset-btn:active {
+            transform: rotate(180deg) scale(0.95);
+        }
+
+        .history-item {
+            background-color: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+
+        .history-item:hover {
+            border-color: #0f766e;
+            transform: translateX(5px);
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-date {
+            color: #d4af37;
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .history-place {
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .delete-btn {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #c53030;
+            transform: scale(1.05);
+        }
+
+        .delete-all-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .delete-all-btn:hover {
+            background-color: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        /* Statistics */
+        .time-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .time-filter {
+            padding: 10px 20px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .time-filter.active {
+            background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+            color: #d4af37;
+            border-color: #0f766e;
+        }
+
+        .stats-overview {
+            background-color: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .stats-overview h3 {
+            color: #d4af37;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .stats-overview .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+
+        .stats-label {
+            color: var(--text-secondary);
+        }
+
+        .stats-value {
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        .chart-section {
+            background-color: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-section h3 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .chart-bar-container {
+            margin-bottom: 20px;
+        }
+
+        .chart-bar-label {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .chart-bar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-bar {
+            height: 30px;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .chart-bar-value {
+            color: #d4af37;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        /* Confirmation Dialog */
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .confirm-dialog.active {
+            display: flex;
+        }
+
+        .confirm-content {
+            background-color: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .confirm-content h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .confirm-content p {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .confirm-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-cancel {
+            background-color: var(--bg-highlight);
+            color: var(--text-primary);
+        }
+
+        .confirm-cancel:hover {
+            transform: translateY(-2px);
+        }
+
+        .confirm-delete {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .confirm-delete:hover {
+            background-color: #c53030;
+            transform: translateY(-2px);
+        }
+
+        /* History Table Overlay specific button */
+        .table-actions {
+            padding: 0 20px 20px 20px;
+        }
+
+        .table-actions .btn-export {
+            margin-top: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -1109,8 +1613,22 @@
     <!-- Header -->
     <div class="header">
         <div class="header-content">
-            <h1>Abrechnung</h1>
+            <div class="header-left">
+                <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+                <h1>Abrechnung</h1>
+            </div>
             <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+    </div>
+
+    <!-- Hamburger Menu -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+    <div class="menu-sidebar" id="menuSidebar">
+        <div class="menu-header">Menü</div>
+        <div class="menu-items">
+            <div class="menu-item" onclick="showMainView()">Neue Abrechnung</div>
+            <div class="menu-item" onclick="showHistoryView()">Verlauf</div>
+            <div class="menu-item" onclick="showStatisticsView()">Statistiken</div>
         </div>
     </div>
 
@@ -1135,6 +1653,13 @@
         <!-- GSG Tab -->
         <div id="tab_gsg" class="tab-content active">
             <div class="content-padding">
+
+                <!-- Aufstellplatz -->
+                <div class="aufstellplatz-container">
+                    <input type="text" id="aufstellplatz_gsg" placeholder="Aufstellplatz" style="color: #a0aec0;">
+                    <button class="reset-btn" onclick="resetGSGFields()" title="Felder zurücksetzen">↻</button>
+                </div>
+
                 <!-- Multi-Device Toggle -->
                 <div class="toggle-container">
                     <span class="toggle-label">2 GSG</span>
@@ -1254,14 +1779,19 @@
                         <span class="result-value" id="brutto_aufsteller_gsg">0,00 €</span>
                     </div>
                 </div>
-
-                <button class="btn-export" id="exportPDF_gsg">📄 PDF exportieren</button>
             </div>
         </div>
 
         <!-- Spieltische Tab -->
         <div id="tab_spieltische" class="tab-content">
             <div class="content-padding">
+
+                <!-- Aufstellplatz -->
+                <div class="aufstellplatz-container">
+                    <input type="text" id="aufstellplatz_spieltische" placeholder="Aufstellplatz" style="color: #a0aec0;">
+                    <button class="reset-btn" onclick="resetSpieltischeFields()" title="Felder zurücksetzen">↻</button>
+                </div>
+
                 <!-- Multi-Device Toggle -->
                 <div class="toggle-container">
                     <span class="toggle-label">Mehrere Tische</span>
@@ -1369,14 +1899,18 @@
                         <span class="result-value" id="brutto_aufsteller_st">0,00 €</span>
                     </div>
                 </div>
-
-                <button class="btn-export" id="exportPDF_st">📄 PDF exportieren</button>
             </div>
         </div>
 		
 		<!-- GSG Gemischt Tab -->
         <div id="tab_gsg_gemischt" class="tab-content">
             <div class="content-padding">
+                <!-- Aufstellplatz -->
+                <div class="aufstellplatz-container">
+                    <input type="text" id="aufstellplatz_gsg_gemischt" placeholder="Aufstellplatz" style="color: #a0aec0;">
+                    <button class="reset-btn" onclick="resetGemischtFields()" title="Felder zurücksetzen">↻</button>
+                </div>
+
                 <!-- GSG Geräte -->
                 <h3 style="margin-bottom: 16px; color: var(--text-secondary);">Geldspielgeräte (VgnSt-pflichtig)</h3>
                 
@@ -1556,8 +2090,6 @@
                         <span class="result-value" id="brutto_aufsteller_gem">0,00 €</span>
                     </div>
                 </div>
-
-                <button class="btn-export" id="exportPDF_gem">📄 PDF exportieren</button>
             </div>
         </div>
     </div>
@@ -1650,6 +2182,64 @@
     </div>
 
     <!-- jsPDF Library -->
+
+    <!-- History View -->
+    <div class="fullscreen-view" id="historyView">
+        <div class="fullscreen-header">
+            <button class="back-btn" onclick="toggleMenu()">☰</button>
+            <h2>Verlauf</h2>
+        </div>
+        <div class="fullscreen-content">
+            <input type="text" class="search-field" id="historySearch" placeholder="Suchen..." oninput="filterHistory()">
+            <div class="history-list" id="historyList"></div>
+            <button class="delete-all-btn" onclick="confirmDeleteAll()">Alle Abrechnungen löschen</button>
+        </div>
+    </div>
+
+    <!-- Statistics View -->
+    <div class="fullscreen-view" id="statisticsView">
+        <div class="fullscreen-header">
+            <button class="back-btn" onclick="toggleMenu()">☰</button>
+            <h2>Statistiken</h2>
+        </div>
+        <div class="fullscreen-content">
+            <div class="time-filters">
+                <button class="time-filter active" onclick="filterStatistics('1month')">Dieser Monat</button>
+                <button class="time-filter" onclick="filterStatistics('3months')">3 Monate</button>
+                <button class="time-filter" onclick="filterStatistics('6months')">6 Monate</button>
+                <button class="time-filter" onclick="filterStatistics('all')">Alle Zeit</button>
+            </div>
+            <div class="stats-overview" id="statsOverview"></div>
+            <div class="chart-section" id="chartSection"></div>
+        </div>
+    </div>
+
+    <!-- History Table Overlay -->
+    <div class="table-view-overlay" id="historyTableOverlay">
+        <div class="table-view-content">
+            <div class="table-view-header">
+                <h2 id="historyTableTitle">Detaillierte Ergebnisse</h2>
+                <button class="table-view-close" onclick="closeHistoryTable()">×</button>
+            </div>
+            <div class="table-view-body" id="historyTableContent"></div>
+            <div class="table-actions">
+                <button class="btn-export" onclick="exportHistoryPDF()">PDF exportieren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Dialog -->
+    <div class="confirm-dialog" id="confirmDialog">
+        <div class="confirm-content">
+            <h3 id="confirmTitle">Bestätigung</h3>
+            <div id="confirmMessage"></div>
+            <div class="confirm-buttons">
+                <button class="confirm-cancel" onclick="closeConfirmDialog()">Abbrechen</button>
+                <button class="confirm-delete" id="confirmAction">Löschen</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script>
@@ -2044,6 +2634,11 @@
             document.getElementById('mwst_aufsteller_gsg').textContent = formatEUR(gsgData.nettoAufsteller * 0.19);
             document.getElementById('brutto_aufsteller_gsg').textContent = formatEUR(gsgData.bruttoAufsteller);
 
+            // Save to history
+            const aufstellplatz_gsg = document.getElementById('aufstellplatz_gsg').value.trim();
+            const isMultiMode_gsg = document.getElementById('multiGsgToggle').checked;
+            saveToHistory('gsg', isMultiMode_gsg ? 'multi' : 'single', aufstellplatz_gsg, gsgData);
+
             document.getElementById('resultsContainer_gsg').classList.add('show');
             scrollToResults('resultsContainer_gsg');
         }
@@ -2281,6 +2876,11 @@
             document.getElementById('mwst_aufsteller_st').textContent = formatEUR(stData.nettoAufsteller * 0.19);
             document.getElementById('brutto_aufsteller_st').textContent = formatEUR(stData.bruttoAufsteller);
 
+            // Save to history
+            const aufstellplatz_st = document.getElementById('aufstellplatz_spieltische').value.trim();
+            const isMultiMode_st = document.getElementById('multiStToggle').checked;
+            saveToHistory('spieltische', isMultiMode_st ? 'multi' : 'single', aufstellplatz_st, stData);
+
             document.getElementById('resultsContainer_st').classList.add('show');
             scrollToResults('resultsContainer_st');
         }
@@ -2516,6 +3116,10 @@
             document.getElementById('netto_aufsteller_gem').textContent = formatEUR(gemData.nettoAufsteller);
             document.getElementById('mwst_aufsteller_gem').textContent = formatEUR(gemData.nettoAufsteller * 0.19);
             document.getElementById('brutto_aufsteller_gem').textContent = formatEUR(gemData.bruttoAufsteller);
+
+            // Save to history
+            const aufstellplatz_gem = document.getElementById('aufstellplatz_gsg_gemischt').value.trim();
+            saveToHistory('gsg_gemischt', 'multi', aufstellplatz_gem, gemData);
 
             document.getElementById('resultsContainer_gem').classList.add('show');
             scrollToResults('resultsContainer_gem');
@@ -3014,6 +3618,635 @@
 
             doc.save(`GSG_Gemischt_Abrechnung_${datum.replace(/\./g, '-')}.pdf`);
         }
+
+
+        // Menu Functions
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.add('active');
+            sidebar.classList.add('active');
+        }
+
+        function closeMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.remove('active');
+            sidebar.classList.remove('active');
+        }
+
+        function showMainView() {
+            closeMenu();
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('historyView').classList.remove('active');
+            document.getElementById('statisticsView').classList.remove('active');
+            // Reset all input fields
+            resetAllFields();
+        }
+
+        function showHistoryView() {
+            closeMenu();
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('historyView').classList.add('active');
+            document.getElementById('statisticsView').classList.remove('active');
+            loadHistory();
+        }
+
+        function showStatisticsView() {
+            closeMenu();
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('historyView').classList.remove('active');
+            document.getElementById('statisticsView').classList.add('active');
+            loadStatistics('3months');
+        }
+
+        function resetAllFields() {
+            // Reset GSG fields
+            document.getElementById('aufstellplatz_gsg').value = '';
+            document.getElementById('kasse_gsg').value = '';
+            document.getElementById('fehlbetrag_gsg').value = '';
+            document.getElementById('kasse_gsg1').value = '';
+            document.getElementById('fehlbetrag_gsg1').value = '';
+            document.getElementById('kasse_gsg2').value = '';
+            document.getElementById('fehlbetrag_gsg2').value = '';
+            document.getElementById('vgnst_gsg').value = '18';
+            document.getElementById('vgnst_gsg_value').textContent = '18';
+            document.getElementById('prozent_gsg').value = '50';
+            document.getElementById('gebuehren_gsg').value = '';
+            document.getElementById('multiGsgToggle').checked = false;
+            document.getElementById('singleGsgContainer').style.display = 'block';
+            document.getElementById('multiGsgContainer').style.display = 'none';
+            document.getElementById('resultsContainer_gsg').classList.remove('show');
+
+            // Reset Spieltische fields
+            document.getElementById('aufstellplatz_spieltische').value = '';
+            document.querySelectorAll('#spieltischeDevices input').forEach(input => input.value = '');
+            document.getElementById('vgnst_prozent_st').value = '20';
+            document.getElementById('vgnst_prozent_st_value').textContent = '20';
+            document.getElementById('vgnst_pauschal_st').value = '';
+            document.getElementById('prozent_st').value = '50';
+            document.getElementById('gebuehren_st').value = '';
+            document.getElementById('multiStToggle').checked = false;
+            document.getElementById('resultsContainer_st').classList.remove('show');
+
+            // Reset GSG Gemischt fields
+            document.getElementById('aufstellplatz_gsg_gemischt').value = '';
+            document.getElementById('kasse_gsg_gem1').value = '';
+            document.getElementById('fehlbetrag_gsg_gem1').value = '';
+            document.getElementById('kasse_gsg_gem2').value = '';
+            document.getElementById('fehlbetrag_gsg_gem2').value = '';
+            document.getElementById('kasse_frei_gem1').value = '';
+            document.getElementById('kasse_frei_gem2').value = '';
+            document.getElementById('kasse_frei_gem3').value = '';
+            document.getElementById('kasse_frei_gem4').value = '';
+            document.getElementById('vgnst_gem').value = '18';
+            document.getElementById('vgnst_gem_value').textContent = '18';
+            document.getElementById('prozent_gem').value = '50';
+            document.getElementById('gebuehren_gem').value = '';
+            document.getElementById('resultsContainer_gem').classList.remove('show');
+        }
+
+        function resetGSGFields() {
+            document.getElementById('aufstellplatz_gsg').value = '';
+            document.getElementById('kasse_gsg').value = '';
+            document.getElementById('fehlbetrag_gsg').value = '';
+            document.getElementById('kasse_gsg1').value = '';
+            document.getElementById('fehlbetrag_gsg1').value = '';
+            document.getElementById('kasse_gsg2').value = '';
+            document.getElementById('fehlbetrag_gsg2').value = '';
+            document.getElementById('gebuehren_gsg').value = '';
+            document.getElementById('resultsContainer_gsg').classList.remove('show');
+        }
+
+        function resetSpieltischeFields() {
+            document.getElementById('aufstellplatz_spieltische').value = '';
+            document.querySelectorAll('#spieltischeDevices input').forEach(input => input.value = '');
+            document.getElementById('vgnst_pauschal_st').value = '';
+            document.getElementById('gebuehren_st').value = '';
+            document.getElementById('resultsContainer_st').classList.remove('show');
+        }
+
+        function resetGemischtFields() {
+            document.getElementById('aufstellplatz_gsg_gemischt').value = '';
+            document.getElementById('kasse_gsg_gem1').value = '';
+            document.getElementById('fehlbetrag_gsg_gem1').value = '';
+            document.getElementById('kasse_gsg_gem2').value = '';
+            document.getElementById('fehlbetrag_gsg_gem2').value = '';
+            document.getElementById('kasse_frei_gem1').value = '';
+            document.getElementById('kasse_frei_gem2').value = '';
+            document.getElementById('kasse_frei_gem3').value = '';
+            document.getElementById('kasse_frei_gem4').value = '';
+            document.getElementById('gebuehren_gem').value = '';
+            document.getElementById('resultsContainer_gem').classList.remove('show');
+        }
+
+        // LocalStorage Functions
+        let currentHistoryEntry = null;
+        let currentStatsFilter = '3months';
+
+        function saveToHistory(tab, mode, aufstellplatz, data) {
+            const history = JSON.parse(localStorage.getItem('gsg_history') || '[]');
+            
+            const entry = {
+                id: Date.now().toString(),
+                timestamp: new Date().toISOString(),
+                aufstellplatz: aufstellplatz || '',
+                tab: tab,
+                mode: mode,
+                data: data
+            };
+            
+            history.unshift(entry);
+            localStorage.setItem('gsg_history', JSON.stringify(history));
+        }
+
+        function loadHistory(searchTerm = '') {
+            const history = JSON.parse(localStorage.getItem('gsg_history') || '[]');
+            const historyList = document.getElementById('historyList');
+            
+            const filtered = history.filter(entry => {
+                if (!searchTerm) return true;
+                const search = searchTerm.toLowerCase();
+                const date = new Date(entry.timestamp).toLocaleString('de-DE');
+                return entry.aufstellplatz.toLowerCase().includes(search) || date.includes(search);
+            });
+
+            if (filtered.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">Keine Abrechnungen gefunden</div>';
+                return;
+            }
+
+            historyList.innerHTML = filtered.map(entry => {
+                const date = new Date(entry.timestamp).toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                const place = entry.aufstellplatz || '(Kein Aufstellplatz)';
+                
+                return `
+                    <div class="history-item" onclick="openHistoryEntry('${entry.id}')">
+                        <div class="history-info">
+                            <div class="history-date">${date}</div>
+                            <div class="history-place">${place}</div>
+                        </div>
+                        <button class="delete-btn" onclick="event.stopPropagation(); confirmDelete('${entry.id}', '${date}', '${place.replace(/'/g, "\'")}')">Löschen</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterHistory() {
+            const searchTerm = document.getElementById('historySearch').value;
+            loadHistory(searchTerm);
+        }
+
+        function openHistoryEntry(id) {
+            const history = JSON.parse(localStorage.getItem('gsg_history') || '[]');
+            const entry = history.find(e => e.id === id);
+            
+            if (!entry) return;
+
+            currentHistoryEntry = entry;
+
+            // Restore data to global variables
+            if (entry.tab === 'gsg') {
+                gsgData = entry.data;
+                
+                // Build the overview table
+                const tbody = document.getElementById('overviewTableBody_gsg');
+                const table = document.getElementById('overviewTable_gsg');
+                tbody.innerHTML = '';
+                
+                if (!gsgData.devices || gsgData.devices.length === 0) {
+                    document.getElementById('historyTableContent').innerHTML = '<div class="no-results">Keine Gerätedaten verfügbar</div>';
+                    return;
+                }
+                
+                const prozent = gsgData.prozentWirt;
+                const gebuehren = gsgData.gebuehren;
+                const gebuehrenProDevice = gsgData.devices.length > 0 ? gebuehren / gsgData.devices.length : 0;
+                const hasGebuehren = gebuehren > 0;
+                
+                // Show/hide Gebühren column
+                const gebuehrenCols = table.querySelectorAll('.gebuehren-col');
+                gebuehrenCols.forEach(col => {
+                    col.style.display = hasGebuehren ? '' : 'none';
+                });
+                
+                let totalWirtAnteil = 0;
+                
+                gsgData.devices.forEach(device => {
+                    const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                    const wirtAnteil = verbleib * (prozent / 100);
+                    totalWirtAnteil += wirtAnteil;
+                    
+                    const row = `
+                        <tr>
+                            <td>${device.name}</td>
+                            <td class="positive-val">${formatEUR(device.brutto)}</td>
+                            <td class="negative-val">${formatEUR(device.mwst)}</td>
+                            <td class="positive-val">${formatEUR(device.netto)}</td>
+                            <td class="negative-val">${formatEUR(device.vgnst)}</td>
+                            <td class="negative-val gebuehren-col" style="display: ${hasGebuehren ? '' : 'none'}">${formatEUR(gebuehrenProDevice)}</td>
+                            <td class="positive-val">${formatEUR(verbleib)}</td>
+                            <td class="positive-val">${prozent.toFixed(2)}%</td>
+                            <td class="positive-val">${formatEUR(wirtAnteil)}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+                
+                // Summary rows
+                const wirtMwst = totalWirtAnteil * 0.19;
+                const wirtTotal = totalWirtAnteil + wirtMwst;
+                
+                const summaryRow = `
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 600;">Nettoanteil Wirt:</td>
+                        <td class="positive-val">${formatEUR(totalWirtAnteil)}</td>
+                    </tr>
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 600;">+ 19% MwSt:</td>
+                        <td class="positive-val">${formatEUR(wirtMwst)}</td>
+                    </tr>
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 900;">= Auszahlung Wirt:</td>
+                        <td class="positive-val" style="font-weight: 900;">${formatEUR(wirtTotal)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += summaryRow;
+                
+                // Add aufstellplatz info if available
+                let aufstellplatzHTML = '';
+                if (entry.aufstellplatz) {
+                    aufstellplatzHTML = `<div style="margin-bottom: 20px; padding: 15px; background-color: var(--bg-highlight); border-radius: 8px;">
+                        <strong style="color: #d4af37;">Aufstellplatz:</strong> <span>${entry.aufstellplatz}</span>
+                    </div>`;
+                }
+                
+                // Clone the table and wrap it
+                const tableClone = table.cloneNode(true);
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = aufstellplatzHTML;
+                wrapper.appendChild(tableClone);
+                
+                document.getElementById('historyTableContent').innerHTML = wrapper.innerHTML;
+                
+            } else if (entry.tab === 'spieltische') {
+                stData = entry.data;
+                
+                const tbody = document.getElementById('overviewTableBody_st');
+                const table = document.getElementById('overviewTable_st');
+                tbody.innerHTML = '';
+                
+                if (!stData.devices || stData.devices.length === 0) {
+                    document.getElementById('historyTableContent').innerHTML = '<div class="no-results">Keine Tischdaten verfügbar</div>';
+                    return;
+                }
+                
+                const prozent = stData.prozentWirt;
+                const gebuehren = stData.gebuehren;
+                const gebuehrenProDevice = stData.devices.length > 0 ? gebuehren / stData.devices.length : 0;
+                const hasGebuehren = gebuehren > 0;
+                
+                const gebuehrenCols = table.querySelectorAll('.gebuehren-col');
+                gebuehrenCols.forEach(col => {
+                    col.style.display = hasGebuehren ? '' : 'none';
+                });
+                
+                let totalWirtAnteil = 0;
+                
+                stData.devices.forEach(device => {
+                    const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                    const wirtAnteil = verbleib * (prozent / 100);
+                    totalWirtAnteil += wirtAnteil;
+                    
+                    const row = `
+                        <tr>
+                            <td>${device.name}</td>
+                            <td class="positive-val">${formatEUR(device.brutto)}</td>
+                            <td class="negative-val">${formatEUR(device.mwst)}</td>
+                            <td class="positive-val">${formatEUR(device.netto)}</td>
+                            <td class="negative-val">${formatEUR(device.vgnst)}</td>
+                            <td class="negative-val gebuehren-col" style="display: ${hasGebuehren ? '' : 'none'}">${formatEUR(gebuehrenProDevice)}</td>
+                            <td class="positive-val">${formatEUR(verbleib)}</td>
+                            <td class="positive-val">${prozent.toFixed(2)}%</td>
+                            <td class="positive-val">${formatEUR(wirtAnteil)}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+                
+                const wirtMwst = totalWirtAnteil * 0.19;
+                const wirtTotal = totalWirtAnteil + wirtMwst;
+                
+                const summaryRow = `
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 600;">Nettoanteil Wirt:</td>
+                        <td class="positive-val">${formatEUR(totalWirtAnteil)}</td>
+                    </tr>
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 600;">+ 19% MwSt:</td>
+                        <td class="positive-val">${formatEUR(wirtMwst)}</td>
+                    </tr>
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 900;">= Auszahlung Wirt:</td>
+                        <td class="positive-val" style="font-weight: 900;">${formatEUR(wirtTotal)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += summaryRow;
+                
+                let aufstellplatzHTML = '';
+                if (entry.aufstellplatz) {
+                    aufstellplatzHTML = `<div style="margin-bottom: 20px; padding: 15px; background-color: var(--bg-highlight); border-radius: 8px;">
+                        <strong style="color: #d4af37;">Aufstellplatz:</strong> <span>${entry.aufstellplatz}</span>
+                    </div>`;
+                }
+                
+                const tableClone = table.cloneNode(true);
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = aufstellplatzHTML;
+                wrapper.appendChild(tableClone);
+                
+                document.getElementById('historyTableContent').innerHTML = wrapper.innerHTML;
+                
+            } else if (entry.tab === 'gsg_gemischt') {
+                gemData = entry.data;
+                
+                const tbody = document.getElementById('overviewTableBody_gem');
+                const table = document.getElementById('overviewTable_gem');
+                tbody.innerHTML = '';
+                
+                if (!gemData.devices || gemData.devices.length === 0) {
+                    document.getElementById('historyTableContent').innerHTML = '<div class="no-results">Keine Gerätedaten verfügbar</div>';
+                    return;
+                }
+                
+                const prozent = gemData.prozentWirt;
+                const gebuehren = gemData.gebuehren;
+                const gebuehrenProDevice = gemData.devices.length > 0 ? gebuehren / gemData.devices.length : 0;
+                const hasGebuehren = gebuehren > 0;
+                
+                const gebuehrenCols = table.querySelectorAll('.gebuehren-col');
+                gebuehrenCols.forEach(col => {
+                    col.style.display = hasGebuehren ? '' : 'none';
+                });
+                
+                let totalWirtAnteil = 0;
+                
+                gemData.devices.forEach(device => {
+                    const verbleib = device.netto - device.vgnst - gebuehrenProDevice;
+                    const wirtAnteil = verbleib * (prozent / 100);
+                    totalWirtAnteil += wirtAnteil;
+                    
+                    const vgnstText = device.vgnstFrei ? 'VgnSt.-Frei' : formatEUR(device.vgnst);
+                    
+                    const row = `
+                        <tr>
+                            <td>${device.name}</td>
+                            <td class="positive-val">${formatEUR(device.brutto)}</td>
+                            <td class="negative-val">${formatEUR(device.mwst)}</td>
+                            <td class="positive-val">${formatEUR(device.netto)}</td>
+                            <td class="${device.vgnstFrei ? '' : 'negative-val'}">${vgnstText}</td>
+                            <td class="negative-val gebuehren-col" style="display: ${hasGebuehren ? '' : 'none'}">${formatEUR(gebuehrenProDevice)}</td>
+                            <td class="positive-val">${formatEUR(verbleib)}</td>
+                            <td class="positive-val">${prozent.toFixed(2)}%</td>
+                            <td class="positive-val">${formatEUR(wirtAnteil)}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+                
+                const wirtMwst = totalWirtAnteil * 0.19;
+                const wirtTotal = totalWirtAnteil + wirtMwst;
+                
+                const summaryRow = `
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 600;">Nettoanteil Wirt:</td>
+                        <td class="positive-val">${formatEUR(totalWirtAnteil)}</td>
+                    </tr>
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 600;">+ 19% MwSt:</td>
+                        <td class="positive-val">${formatEUR(wirtMwst)}</td>
+                    </tr>
+                    <tr class="summary-row">
+                        <td colspan="${hasGebuehren ? 8 : 7}" style="text-align: right; font-weight: 900;">= Auszahlung Wirt:</td>
+                        <td class="positive-val" style="font-weight: 900;">${formatEUR(wirtTotal)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += summaryRow;
+                
+                let aufstellplatzHTML = '';
+                if (entry.aufstellplatz) {
+                    aufstellplatzHTML = `<div style="margin-bottom: 20px; padding: 15px; background-color: var(--bg-highlight); border-radius: 8px;">
+                        <strong style="color: #d4af37;">Aufstellplatz:</strong> <span>${entry.aufstellplatz}</span>
+                    </div>`;
+                }
+                
+                const tableClone = table.cloneNode(true);
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = aufstellplatzHTML;
+                wrapper.appendChild(tableClone);
+                
+                document.getElementById('historyTableContent').innerHTML = wrapper.innerHTML;
+            }
+
+            const tabNames = {
+                'gsg': 'Geldspielgeräte',
+                'spieltische': 'Spieltische',
+                'gsg_gemischt': 'GSG Gemischt'
+            };
+
+            document.getElementById('historyTableTitle').textContent = tabNames[entry.tab] + ' - ' + new Date(entry.timestamp).toLocaleString('de-DE');
+            document.getElementById('historyTableOverlay').style.display = 'block';
+        }
+
+        function closeHistoryTable() {
+            document.getElementById('historyTableOverlay').style.display = 'none';
+            currentHistoryEntry = null;
+        }
+
+        function confirmDelete(id, date, place) {
+            const dialog = document.getElementById('confirmDialog');
+            const message = document.getElementById('confirmMessage');
+            const action = document.getElementById('confirmAction');
+            
+            document.getElementById('confirmTitle').textContent = 'Wirklich löschen?';
+            message.innerHTML = `<p><strong>${date}</strong></p><p>${place}</p>`;
+            action.textContent = 'Löschen';
+            
+            action.onclick = () => {
+                deleteEntry(id);
+                closeConfirmDialog();
+            };
+            
+            dialog.classList.add('active');
+        }
+
+        function deleteEntry(id) {
+            let history = JSON.parse(localStorage.getItem('gsg_history') || '[]');
+            history = history.filter(e => e.id !== id);
+            localStorage.setItem('gsg_history', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function confirmDeleteAll() {
+            const history = JSON.parse(localStorage.getItem('gsg_history') || '[]');
+            
+            if (history.length === 0) {
+                alert('Keine Abrechnungen vorhanden');
+                return;
+            }
+
+            const dialog = document.getElementById('confirmDialog');
+            const message = document.getElementById('confirmMessage');
+            const action = document.getElementById('confirmAction');
+            
+            document.getElementById('confirmTitle').textContent = 'Wirklich ALLE löschen?';
+            message.innerHTML = `<p><strong>${history.length} Abrechnungen werden unwiderruflich gelöscht!</strong></p>`;
+            action.textContent = 'Alle löschen';
+            
+            action.onclick = () => {
+                localStorage.setItem('gsg_history', JSON.stringify([]));
+                loadHistory();
+                closeConfirmDialog();
+            };
+            
+            dialog.classList.add('active');
+        }
+
+        function closeConfirmDialog() {
+            document.getElementById('confirmDialog').classList.remove('active');
+        }
+
+        function filterStatistics(timeRange) {
+            currentStatsFilter = timeRange;
+            
+            const buttons = document.querySelectorAll('.time-filter');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            loadStatistics(timeRange);
+        }
+
+        function loadStatistics(timeRange) {
+            const history = JSON.parse(localStorage.getItem('gsg_history') || '[]');
+            const now = new Date();
+            let filtered = history;
+
+            if (timeRange === '1month') {
+                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                filtered = history.filter(e => new Date(e.timestamp) > monthAgo);
+            } else if (timeRange === '3months') {
+                const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+                filtered = history.filter(e => new Date(e.timestamp) > threeMonthsAgo);
+            } else if (timeRange === '6months') {
+                const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
+                filtered = history.filter(e => new Date(e.timestamp) > sixMonthsAgo);
+            }
+
+            const stats = {
+                totalWirt: 0,
+                totalAufsteller: 0,
+                totalBrutto: 0,
+                count: filtered.length,
+                byAufstellplatz: {}
+            };
+
+            filtered.forEach(entry => {
+                stats.totalWirt += entry.data.bruttoWirt || 0;
+                stats.totalAufsteller += entry.data.bruttoAufsteller || 0;
+                stats.totalBrutto += (entry.data.bruttoWirt || 0) + (entry.data.bruttoAufsteller || 0);
+                
+                const platz = entry.aufstellplatz || 'Unbekannt';
+                if (!stats.byAufstellplatz[platz]) {
+                    stats.byAufstellplatz[platz] = 0;
+                }
+                stats.byAufstellplatz[platz] += (entry.data.bruttoWirt || 0) + (entry.data.bruttoAufsteller || 0);
+            });
+
+            displayStatistics(stats, timeRange);
+        }
+
+        function displayStatistics(stats, timeRange) {
+            const timeRangeText = {
+                '1month': 'Letzter Monat',
+                '3months': 'Letzte 3 Monate',
+                '6months': 'Letzte 6 Monate',
+                'all': 'Alle Zeit'
+            };
+
+            const overview = document.getElementById('statsOverview');
+            overview.innerHTML = `
+                <h3>Gesamt-Übersicht</h3>
+                <div class="subtitle">${timeRangeText[timeRange]} - ${stats.count} Abrechnungen</div>
+                <div class="stats-row">
+                    <span class="stats-label">Wirt gesamt:</span>
+                    <span class="stats-value">${formatEUR(stats.totalWirt)}</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Aufsteller gesamt:</span>
+                    <span class="stats-value">${formatEUR(stats.totalAufsteller)}</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Brutto gesamt:</span>
+                    <span class="stats-value">${formatEUR(stats.totalBrutto)}</span>
+                </div>
+            `;
+
+            const chartSection = document.getElementById('chartSection');
+            
+            if (Object.keys(stats.byAufstellplatz).length === 0) {
+                chartSection.innerHTML = '<div class="no-results">Keine Daten für Diagramme verfügbar</div>';
+                return;
+            }
+
+            const sorted = Object.entries(stats.byAufstellplatz)
+                .sort((a, b) => b[1] - a[1]);
+
+            const maxValue = sorted[0][1];
+            const colors = ['#0f766e', '#d4af37', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+
+            let chartHTML = '<h3>Umsatz nach Aufstellort</h3>';
+            
+            sorted.forEach(([platz, value], index) => {
+                const percentage = (value / maxValue) * 100;
+                const color = colors[index % colors.length];
+                
+                chartHTML += `
+                    <div class="chart-bar-container">
+                        <div class="chart-bar-label">${platz}</div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar" style="width: ${percentage}%; background-color: ${color};"></div>
+                            <div class="chart-bar-value">${formatEUR(value)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            chartSection.innerHTML = chartHTML;
+        }
+
+        function exportHistoryPDF() {
+            if (!currentHistoryEntry) return;
+            
+            // Reuse existing PDF generation logic but with currentHistoryEntry data
+            const entry = currentHistoryEntry;
+            if (entry.tab === 'gsg') {
+                gsgData = entry.data;
+                generatePDF_GSG();
+            } else if (entry.tab === 'spieltische') {
+                stData = entry.data;
+                generatePDF_ST();
+            } else if (entry.tab === 'gsg_gemischt') {
+                gemData = entry.data;
+                generatePDF_GEM();
+            }
+        }
+
 
         document.getElementById('exportPDF_gsg').addEventListener('click', generatePDF_GSG);
         document.getElementById('exportPDF_st').addEventListener('click', generatePDF_ST);
